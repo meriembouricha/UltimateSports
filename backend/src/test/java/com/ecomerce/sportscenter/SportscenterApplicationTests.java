@@ -1,13 +1,15 @@
 package com.ecomerce.sportscenter;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class SportscenterApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// Simple test that doesn't require Spring context
-		assert true;
 	}
 
 }
