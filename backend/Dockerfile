@@ -1,9 +1,9 @@
-# Use a base image that's more likely to be available
-FROM openjdk:17
+# Use a base image that might be available locally
+FROM ubuntu:20.04
 
-# Install Maven
+# Install Java 17 and Maven
 RUN apt-get update && \
-    apt-get install -y maven && \
+    apt-get install -y openjdk-17-jdk maven && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
