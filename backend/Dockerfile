@@ -1,22 +1,20 @@
-# Use a base image that might be available locally
-FROM ubuntu:20.04
-
-# Install Java 17 and Maven
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk maven && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Use JDK base image
+FROM eclipse-temurin:17-jdk
 
 # Set working directory
 WORKDIR /app
 
-# Copy the entire project
+# Copy Maven wrapper and build files
 COPY . .
 
-# Build the application
-RUN mvn clean package -DskipTests
+# Make sure Maven wrapper is executable
+RUN chmod +x mvnw
+
+# Build the app
+RUN ./mvnw clean package -DskipTests
 
 # Copy the built JAR
+# Replace with the actual JAR file name if known
 RUN cp target/*.jar app.jar
 
 # Expose app port
