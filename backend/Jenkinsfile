@@ -21,7 +21,7 @@ pipeline {
                         $class: 'GitSCM',
                         branches: [[name: '*/prod']],
                         userRemoteConfigs: [[
-                            url: 'https://github.com/meriembouricha/sportscenter-backend.git',
+                            url: 'https://github.com/meriembouricha/UltimateSports.git',
                             credentialsId: 'github-pat'
                         ]]
                     ])
