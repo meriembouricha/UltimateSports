@@ -1,0 +1,243 @@
+/* General body */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Search Bar */
+/* Search Bar */
+.faq-search {
+  text-align: center;
+  padding: 40px 20px 90px 20px;
+  background: linear-gradient(135deg, #b31f1f, #363636);
+  color: white;
+}
+.faq-search h2 {
+  font-size: 36px;
+    margin-top: 80px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color : white;
+  letter-spacing: 1px;
+}
+.faq-search form {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.faq-search input {
+  padding: 14px 20px;       /* augmenter la hauteur */
+  width: 340px;
+  border: none;
+  font-size: 16px;           /* taille du texte */
+  line-height: 1.2;          /* réduire légèrement la hauteur du texte */
+  vertical-align: middle;    /* centre le texte verticalement */
+}
+.faq-search button {
+  padding: 14px 30px;
+  background: #fff;
+  color: #ff1e1e;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1.2;          /* texte plus centré */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.faq-search button:hover {
+  background: #ff1e1e;
+  color: white;
+}
+.faq-search p {
+  margin-top: 12px;
+  margin-bottom: -24px;
+  font-size: 15px;
+  color: #9b9b9b;
+  line-height: 1.4;
+}
+
+/* Tabs */
+.tabs {
+  list-style: none;
+  padding: 0;
+  margin: 40px 0 20px 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.tabs li a {
+  text-decoration: none;
+  padding: 12px 25px;
+  display: inline-block;
+  font-weight: bold;;
+  background: #e0e0e0;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  min-width: 120px;
+}
+.tabs li a.active {
+  background: #000000;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.tabs li a:hover {
+  background: #ff1e1e;
+  color: white;
+}
+
+/* Tab content */
+.tabs_item {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  padding: 0 20px 40px 20px;
+}
+.tabs_item.active {
+  display: block;
+  opacity: 1;
+}
+.title h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 45px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #000000;
+}
+.title p {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+/* Accordion */
+.faq-accordion {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.accordion-item {
+  margin-bottom: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.accordion-title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 18px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  background: #fff;
+  color: #000000;
+}
+.accordion-title:hover {
+  background: #ffebee;
+}
+.accordion-title .icon {
+  display: inline-block;
+  width: 20px;
+  margin-right: 15px;
+  font-weight: bold;
+  font-size: 20px;
+  color: #000000;
+}
+.accordion-title.active {
+  background: #cacaca;
+}
+.accordion-content {
+  display: none;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  background: #fff5f5;
+  color: #555;
+}
+.accordion-content.show {
+  display: block;
+}
+
+/* Icons for plus/minus */
+.icon-plus::before { content: '+'; }
+.icon-minus::before { content: '-'; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabs li a {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  .faq-search input {
+    width: 200px;
+  }
+}
+
+
+/* Footer */
+.site-footer {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 40px 20px 20px 20px;
+  font-size: 0.95rem;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-section h4 {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+  color: #c91d1d;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Icônes réseaux sociaux */
+.social-links li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.social-links li i {
+  color: #c91d1d;
+}

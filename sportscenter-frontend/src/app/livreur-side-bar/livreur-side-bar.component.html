@@ -1,0 +1,23 @@
+<aside class="modern-sidebar d-flex flex-column">
+  <div class="brand p-3 mb-3 text-white fw-bold">
+    <i class="fas fa-chart-line me-2"></i> Dashboard Livreur
+  </div>
+  <ul class="nav flex-column sidebar-nav">
+    
+    <li class="nav-item">
+      <a
+        class="nav-link"
+        routerLink="/admin/orders"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-shopping-cart me-2"></i>Commandes
+      </a>
+    </li>
+    <li class="nav-item mt-auto">
+      <a class="nav-link text-danger" href="#" (click)="logout()">
+        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+      </a>
+    </li>
+  </ul>
+</aside>

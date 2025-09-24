@@ -1,0 +1,188 @@
+/* ==============================
+   Navbar générale
+   ============================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  background-color: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  z-index: 1000;
+  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
+  transition: background-color 0.3s ease;
+
+  /* Navbar sur /store */
+  &.navbar-store {
+    background-color: #000 !important;
+    border-bottom: 0.03cm solid #222 !important;
+    box-shadow: 0 0.07cm 0.13cm rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Logo */
+  .navbar-brand img {
+    max-height: 3.8cm;
+    margin-left: 0;
+  }
+
+  /* Liens du menu */
+  .navbar-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    .nav-link {
+      margin-left: 0.6cm;
+      white-space: nowrap;
+      color: #d5d5d5;
+      font-weight: 500;
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+
+      &:hover,
+      .active & {
+        color: #d4a6a6c9; /* Bordeaux */
+      }
+    }
+  }
+
+  /* Badge panier */
+  .cart-badge {
+    top: -5px;
+    right: -10px;
+    background-color: #ff0f0f;
+    color: #fcfcfc;
+    font-size: 0.8rem;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 10;
+  }
+
+  .nav-link.position-relative:hover .cart-badge {
+    background-color: #ff3333;
+  }
+
+  /* Icônes */
+  .navbar-nav .fa-lg {
+    font-size: 0.63cm;
+  }
+
+  /* Mega Dropdown */
+  .mega-dropdown {
+    position: relative;
+
+    .mega-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 600px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      padding: 20px;
+      transition: all 0.3s ease;
+
+      &.show {
+        display: block;
+      }
+
+      .types,
+      .brands {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      a.dropdown-item {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        transition: background 0.2s, color 0.2s;
+
+        &:hover {
+          background: #007bff;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  /* User Menu */
+  .user-menu {
+    position: relative;
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      min-width: 200px;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      padding: 0.5rem 0;
+      z-index: 1000;
+
+      li a {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        color: #333;
+        text-decoration: none;
+
+        &:hover {
+          background-color: #f0f0f0;
+          color: #000;
+        }
+
+        &.text-danger:hover {
+          background-color: #f8d7da;
+          color: #a71d2a;
+        }
+
+        i {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+
+    .dropdown-menu.show {
+      display: block !important;
+    }
+  }
+}
+
+/* Toast personnalisé */
+.custom-toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background-color: #28a745;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.4rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-weight: 500;
+  z-index: 2000;
+  opacity: 1;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+
+  &.hide {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}

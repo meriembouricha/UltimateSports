@@ -1,0 +1,54 @@
+<aside class="modern-sidebar d-flex flex-column">
+  <div class="brand p-3 mb-3 text-white fw-bold">
+    <i class="fas fa-chart-line me-2"></i> Admin Panel
+  </div>
+  <ul class="nav flex-column sidebar-nav">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/stats" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/users" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-users me-2"></i>Utilisateurs
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/products" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-cogs me-2"></i>Produits
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/complaints" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-exclamation-triangle me-2"></i>Réclamations
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/stock" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-boxes me-2"></i>Stock
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/orders" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-shopping-cart me-2"></i>Commandes
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/powerbi-embed" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <i class="fas fa-chart-line me-2"></i> Dashboard Power BI
+      </a>
+    </li>
+    <li class="nav-item mt-auto">
+      <a class="nav-link text-danger" href="#" (click)="logout()">
+        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+      </a>
+    </li>
+  </ul>
+</aside>

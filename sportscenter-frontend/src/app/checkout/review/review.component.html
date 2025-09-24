@@ -1,0 +1,35 @@
+<div class="container mt-5" *ngIf="basket">
+  <h3 class="fw-bold mb-4 text-center">Your Items</h3>
+
+  <div *ngIf="basket.items && basket.items.length > 0" class="table-responsive">
+    <table class="table align-middle shadow-sm bg-white rounded">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Product</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Price</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of basket.items">
+          <td>
+               <img [src]="item.pictureUrl" class="product-image" alt="image"  width="20%"/>
+            </td>
+          <td class="fw-medium">{{ item.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.price | currency: 'EUR' }}</td>
+          <td>{{ item.quantity * item.price | currency: 'EUR' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Confirm Button -->
+  <div class="text-center mt-4">
+    <button class="btn btn-dark px-4 py-2" (click)="submitOrderAndPay()">
+      <i class="fa fa-credit-card me-1"></i> Confirm and Pay
+    </button>
+  </div>
+</div>

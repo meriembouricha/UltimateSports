@@ -1,0 +1,80 @@
+<div class="layout">
+  <!-- Sidebar -->
+<app-livreur-side-bar class= "Sidebar"> </app-livreur-side-bar>
+
+  <!-- Contenu principal -->
+  <div class="content">
+    <div class="stock-container">
+      <h2>Gestion des Commandes - Livreur</h2>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID Commande</th>
+            <th>Utilisateur</th>
+            <th>Statut de Livraison</th>
+            <th>Montant Total</th>
+            <th>Frais de Livraison</th>
+            <th>Détails</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let order of paginatedOrders">
+            <tr>
+              <td>{{ order.id }}</td>
+              <td>{{ order.username }}<br><small>{{ order.userEmail }}</small></td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <select [(ngModel)]="order.deliveryStatus" (change)="updateStatus(order)" [disabled]="order.isLoading ?? false">
+                    <option value="PENDING">En attente</option>
+                    <option value="IN_TRANSIT">En cours</option>
+                    <option value="DELIVERED">Livré</option>
+                    <option value="CANCELLED">Annulé</option>
+                  </select>
+                  <div *ngIf="order.isLoading" class="spinner"></div>
+                </div>
+              </td>
+              <td>{{ order.totalAmount / 100 | currency: 'EUR' }}</td>
+              <td>{{ order.shippingPrice / 100 | currency: 'EUR' }}</td>
+              <td>
+                <button (click)="toggleExpand(order.id)">
+                  {{ expandedOrderId === order.id ? 'Réduire' : 'Afficher' }}
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="expandedOrderId === order.id">
+              <td colspan="6">
+                <div class="collapse-section">
+                  <h4>Produits commandés :</h4>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of order.items">
+                        <td>{{ item.productName }}</td>
+                        <td>{{ item.productPrice / 100 | currency: 'EUR' }}</td>
+                        <td>{{ item.quantity }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button (click)="loadPreviousPage()" [disabled]="currentPage === 0">Précédent</button>
+        <span>Page {{ currentPage + 1 }} sur {{ totalPages }}</span>
+        <button (click)="loadNextPage()" [disabled]="currentPage === totalPages - 1">Suivant</button>
+      </div>
+    </div>
+  </div>
+</div>

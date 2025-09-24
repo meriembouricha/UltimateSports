@@ -1,0 +1,103 @@
+<!-- Product Details Component HTML -->
+<div class="main-content" *ngIf="product">
+  <div class="container mt-4 pt-navbar-offset">
+    <div class="row g-5">
+      <!-- Page Title -->
+      <div class="page-title text-center mt-4">
+        <h1 class="fw-bold page-title-text">Product Details</h1>
+        <p class="text-muted">Check out the details and leave your feedback below</p>
+      </div>
+
+      <!-- Product Image -->
+      <div class="col-md-6">
+        <div class="product-image-wrapper text-center">
+          <img [src]="mainImage" [alt]="product.name" class="main-product-image img-fluid" />
+        </div>
+      </div>
+
+      <!-- Product Details -->
+      <div class="col-md-6">
+        <h2 class="fw-bold product-name">{{ product.name }}</h2>
+        <p class="text-muted mb-4">{{ product.description }}</p>
+
+        <div class="mb-3">
+          <strong>Price:</strong>
+          <span class="h4 text-success fw-semibold">€{{ product.price | number:'1.2-2' }}</span>
+        </div>
+        <div class="mb-2"><strong>Brand:</strong> {{ product.productBrand }}</div>
+        <div class="mb-4"><strong>Type:</strong> {{ product.productType }}</div>
+
+        <!-- Variant Selection -->
+        <div *ngIf="hasVariants" class="mb-4 variants-selection">
+          <h5>Select Variant</h5>
+          <div *ngIf="hasSizeVariants" class="mb-2">
+            <label>Size:</label>
+            <select class="form-select" [(ngModel)]="selectedSize" (change)="onVariantChange()">
+              <option value="" disabled selected>Select size</option>
+              <option *ngFor="let v of product.variants" [value]="v.size">{{ v.size }}</option>
+            </select>
+          </div>
+          <div *ngIf="hasColorVariants">
+            <label>Color:</label>
+            <select class="form-select" [(ngModel)]="selectedColor" (change)="onVariantChange()">
+              <option value="" disabled selected>Select color</option>
+              <option *ngFor="let v of product.variants" [value]="v.color">{{ v.color }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quantity Control -->
+        <div class="d-flex align-items-center mb-4">
+          <strong class="me-3">Quantity:</strong>
+          <button class="btn btn-outline-secondary btn-sm" (click)="decrementQuantity()">
+            <i class="fa fa-minus"></i>
+          </button>
+          <span class="mx-3 fw-bold">{{ quantity }}</span>
+          <button class="btn btn-outline-secondary btn-sm" (click)="incrementQuantity()">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+
+        <!-- Actions -->
+        <button class="btn btn-success me-2" (click)="addToCart()">
+          <i class="fa fa-shopping-cart me-1"></i> Add to Cart
+        </button>
+        <button class="btn btn-outline-secondary" routerLink="/store">← Back to Store</button>
+      </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="card mt-5 shadow-sm border-0">
+      <div class="card-body">
+        <div *ngIf="user" class="mb-4">
+          <h4 class="mb-3">Leave a Feedback</h4>
+          <form (ngSubmit)="submitFeedback()" #feedbackForm="ngForm">
+            <div class="mb-3 stars">
+              <span *ngFor="let star of [1,2,3,4,5]" [ngClass]="{'filled': star <= feedback.rate}"
+                (click)="setRating(star)" class="star">&#9733;</span>
+            </div>
+            <div class="mb-3">
+              <textarea class="form-control" name="comment" [(ngModel)]="feedback.descFeedback" rows="2"
+                placeholder="Write your comment..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm" [disabled]="feedbackForm.invalid">
+              Submit
+            </button>
+          </form>
+        </div>
+
+        <div class="existing-feedbacks">
+          <h5 class="mb-3">Customer Reviews</h5>
+          <div *ngFor="let fb of feedbacks" class="mb-3 pb-3 border-bottom">
+            <p class="mb-1 fw-semibold">{{ fb.user?.username }}</p>
+            <div class="stars mb-1">
+              <span *ngFor="let star of getStars(fb.rate)" class="star filled">&#9733;</span>
+              <span *ngFor="let emptyStar of getStars(5 - fb.rate)" class="star">&#9733;</span>
+            </div>
+            <p class="text-muted mb-0">{{ fb.descFeedback }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="stock-management-container">
+  <div class="header">
+    <h2>Gestion des Stocks</h2>
+  </div>
+
+  <div class="list-section">
+    <h3 class="section-title">Liste des Produits</h3>
+
+    <table class="table stock-table">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Photo</th>
+          <th>Quantité</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.name }}</td>
+          <td>
+            <img [src]="product.pictureUrl" class="product-image" alt="image" />
+          </td>
+          <td>{{ product.productQuantity }}</td>
+          <td>
+            <!-- Champ pour saisir la quantité -->
+            <input
+              type="number"
+              [(ngModel)]="product.addQuantity"
+              min="1"
+              class="form-control form-control-sm mb-1"
+              placeholder="Quantité"
+            />
+
+            <!-- Bouton pour ajouter -->
+            <button
+              class="btn btn-success btn-sm me-2"
+              (click)="incrementStock(product.id, product.addQuantity || 0)"
+            >
+              Ajouter
+            </button>
+
+            <!-- Bouton pour réduire -->
+            <button
+              class="btn btn-warning btn-sm"
+              (click)="decrementStock(product.id, product.addQuantity || 0)"
+              [disabled]="product.productQuantity <= 0"
+            >
+              Réduire
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div
+      class="pagination-controls d-flex justify-content-between align-items-center mt-3"
+    >
+      <button
+        class="btn btn-outline-primary"
+        (click)="loadPreviousPage()"
+        [disabled]="currentPage === 0"
+      >
+        Précédent
+      </button>
+      <span>Page {{ currentPage + 1 }} sur {{ totalPages }}</span>
+      <button
+        class="btn btn-outline-primary"
+        (click)="loadNextPage()"
+        [disabled]="currentPage === totalPages - 1"
+      >
+        Suivant
+      </button>
+    </div>
+  </div>
+</div>

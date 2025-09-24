@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  mysql:
+    container_name: sportscenter_proj_mysql
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3321:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: MeriemPFE
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - sportscenter_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: sportscenter_redis
+    ports:
+      - "6385:6379"
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - sportscenter_net
+
+  app:
+    build: ./backend
+    image: sportscenter-app
+    container_name: sportscenter_backend
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    networks:
+      - sportscenter_net
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/MeriemPFE?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+
+  frontend:
+    build: ./sportscenter-frontend
+    container_name: sportscenter_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    networks:
+      - sportscenter_net
+
+  recommendation:
+    build: ./Recommendation-Service/aaaa/Recommendation-Service
+    container_name: sportscenter_recommendation
+    ports:
+      - "8000:8000"
+    environment:
+      DB_URL: mysql+pymysql://root:root@mysql:3306/MeriemPFE
+    depends_on:
+      - mysql
+    networks:
+      - sportscenter_net
+
+  adminer:
+    container_name: sportscenter_proj_adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - "36750:8080"
+    networks:
+      - sportscenter_net
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: sportscenter_redis_admin
+    environment:
+      - REDIS_HOSTS=local:sportscenter_redis:6379
+    ports:
+      - "45741:8081"
+    depends_on:
+      - redis
+    networks:
+      - sportscenter_net
+
+volumes:
+  mysql_data:
+
+networks:
+  sportscenter_net:
+    driver: bridge

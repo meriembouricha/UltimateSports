@@ -1,0 +1,66 @@
+<div class="product-management-container">
+  <div class="header">
+    <h2>Gestion des Produits</h2>
+  </div>
+
+  <div class="content">
+    <!-- Formulaire à gauche -->
+    <div class="form-section">
+      <h3 class="section-title">Ajouter un produit</h3>
+      <form (ngSubmit)="createProduct()" class="form-grid">
+        <div class="form-group">
+          <label for="name">Nom du produit</label>
+          <input id="name" type="text" class="form-control" [(ngModel)]="newProduct.name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" class="form-control" [(ngModel)]="newProduct.description" name="description" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="price">Prix</label>
+          <input id="price" type="number" class="form-control" [(ngModel)]="newProduct.price" name="price" required />
+        </div>
+
+        <div class="form-group">
+          <label for="pictureUrl">URL de l'image</label>
+          <input id="pictureUrl" type="text" class="form-control" [(ngModel)]="newProduct.pictureUrl" name="pictureUrl" required />
+        </div>
+
+        <div class="form-group">
+          <label for="type">Type de produit</label>
+          <input id="type" type="text" class="form-control" [(ngModel)]="newProduct.productType" name="productType" required />
+        </div>
+
+        <div class="form-group">
+          <label for="brand">Marque</label>
+          <input id="brand" type="text" class="form-control" [(ngModel)]="newProduct.productBrand" name="productBrand" required />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Liste des produits -->
+    <div class="list-section">
+      <h3 class="section-title">Liste des Produits</h3>
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let product of products">
+          <span>{{ product.name }} - {{ product.price }}€</span>
+          <div>
+            <button class="btn btn-warning btn-sm me-2" [routerLink]="['/admin/update-product', product.id]">Modifier</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)">Supprimer</button>
+          </div>
+        </li>
+      </ul>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <button class="btn btn-outline-primary" (click)="loadPreviousPage()" [disabled]="currentPage === 0">Précédent</button>
+        <span>Page {{ currentPage + 1 }} sur {{ totalPages }}</span>
+        <button class="btn btn-outline-primary" (click)="loadNextPage()" [disabled]="currentPage === totalPages - 1">Suivant</button>
+      </div>
+    </div>
+  </div>
+</div>

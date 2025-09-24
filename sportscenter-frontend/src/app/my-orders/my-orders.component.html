@@ -1,0 +1,45 @@
+<div class="orders-search">
+  <h2>
+<h2 style="color: white;">My Orders</h2>
+  </h2>
+  <p>
+    Find all your past orders and track their status in real time.
+  </p>
+</div>
+
+<div class="orders-area" *ngIf="orders.length > 0; else noOrders">
+  <div class="orders-container">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Items</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.deliveryStatus }}</td>
+          <td>
+            <ul class="order-items">
+              <li *ngFor="let item of order.items">
+                <span class="item-name">{{ item.productName }}</span>
+                <span class="item-qty">× {{ item.quantity }}</span>
+                <span class="item-price">{{ item.productPrice }} €</span>
+              </li>
+            </ul>
+          </td>
+          <td class="order-total">
+            {{ getOrderTotal(order) }} €
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #noOrders>
+  <div class="no-orders">
+    <p>No orders found for your account.</p>
+  </div>
+</ng-template>

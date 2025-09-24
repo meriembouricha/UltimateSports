@@ -1,0 +1,76 @@
+<div class="register-page">
+  <div class="register-card shadow-lg">
+    <!-- Title -->
+    <div class="text-center mb-4">
+      <img src="/assets/images/logologin.jpg" alt="Sports Center" width="170" />
+      <h2 class="fw-bold text-dark">Create an Account</h2>
+      <p class="text-muted">Fill in the form to get started</p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Username -->
+      <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa fa-user"></i></span>
+        <input type="text" class="form-control" formControlName="username" placeholder="Username" autocomplete="off" />
+      </div>
+      <div *ngIf="registerForm.get('username')?.hasError('required') && registerForm.get('username')?.touched"
+           class="text-danger mb-2">Username is required</div>
+      <div *ngIf="registerForm.get('username')?.hasError('usernameTaken')"
+           class="text-danger mb-2">Username already exists</div>
+
+      <!-- Email -->
+      <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+        <input type="email" class="form-control" formControlName="email" placeholder="Email" />
+      </div>
+      <div *ngIf="registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched"
+           class="text-danger mb-2">Email is required</div>
+      <div *ngIf="registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched"
+           class="text-danger mb-2">Invalid email</div>
+
+      <!-- Password -->
+      <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+        <input [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Password" />
+        <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()" tabindex="-1">
+          <i [ngClass]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+        </button>
+      </div>
+      <div *ngIf="registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched"
+           class="text-danger mb-2">Password is required</div>
+      <div *ngIf="registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched"
+           class="text-danger mb-2">Password must be at least 6 characters</div>
+           <!-- Confirm Password -->
+<div class="input-group mb-3">
+  <span class="input-group-text"><i class="fa fa-lock"></i></span>
+  <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" formControlName="confirmPassword" placeholder="Confirm Password" />
+  <button type="button" class="btn btn-outline-secondary" (click)="toggleConfirmPassword()" tabindex="-1">
+    <i [ngClass]="showConfirmPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+  </button>
+</div>
+<div *ngIf="registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched"
+     class="text-danger mb-2">Confirm password is required</div>
+<div *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
+     class="text-danger mb-2">Passwords do not match</div>
+
+
+      <!-- Submit -->
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-dark" [disabled]="!registerForm.valid">Sign Up</button>
+      </div>
+
+      <!-- Success / Error -->
+      <div *ngIf="message" [ngClass]="{ 'text-success': success, 'text-danger': !success }" class="text-center mb-3">
+        {{ message }}
+      </div>
+
+      <!-- Login Link -->
+      <p class="text-center">
+        Already have an account?
+        <a routerLink="/login" class="fw-bold text-danger text-decoration-underline">Log in</a>
+      </p>
+    </form>
+  </div>
+</div>

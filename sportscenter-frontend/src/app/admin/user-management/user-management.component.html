@@ -1,0 +1,82 @@
+<div class="user-management-container">
+  <div class="header">
+    <h2>Gestion des utilisateurs</h2>
+  </div>
+
+  <!-- Zone de recherche -->
+  <div class="search-section mb-4">
+    <input type="text" class="form-control search-input" placeholder="Rechercher par nom d'utilisateur"
+      [(ngModel)]="searchTerm" (input)="filterUsers()" />
+  </div>
+
+  <!-- Tableau des utilisateurs -->
+  <div class="table-section">
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of paginatedUsers">
+      <td>{{ user.id }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <span 
+          [ngClass]="{
+            'text-success': user.enabled,
+            'text-danger': !user.enabled
+          }"
+        >
+          {{ user.enabled ? 'Activé' : 'Désactivé' }}
+        </span>
+      </td>
+      <td>
+        <!-- Bouton Activer -->
+        <button 
+          class="btn btn-success btn-sm me-2"
+          (click)="activateUser(user.id)"
+          [disabled]="user.enabled"
+        >
+          Activer
+        </button>
+
+        <!-- Bouton Désactiver -->
+        <button 
+          class="btn btn-warning btn-sm me-2"
+          (click)="deactivateUser(user.id)"
+          [disabled]="!user.enabled"
+        >
+          Désactiver
+        </button>
+
+        <!-- Bouton Supprimer -->
+        <button 
+          class="btn btn-danger btn-sm"
+          (click)="deleteUser(user.id)"
+        >
+          Supprimer
+        </button>
+      </td>
+    </tr>
+    <tr *ngIf="paginatedUsers.length === 0">
+      <td colspan="5" class="text-center text-muted">Aucun utilisateur trouvé</td>
+    </tr>
+  </tbody>
+</table>
+
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-controls d-flex justify-content-between align-items-center mt-3">
+    <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="currentPage === 1">Précédent</button>
+    <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+    <button class="btn btn-outline-primary" (click)="nextPage()"
+      [disabled]="currentPage === totalPages">Suivant</button>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="faq-search">
+  <h2>Ultimate Sports FAQ</h2>
+  <form>
+    <input
+      type="text"
+      placeholder="Search a question..."
+      [(ngModel)]="searchQuery"
+      name="searchQuery"
+      (ngModelChange)="filterQuestions()"
+    />
+    <button type="button">Search</button>
+  </form>
+  <p>or choose a category to quickly find the help you need</p>
+</div>
+
+<div class="faq-area">
+  <div class="tab faq-accordion-tab">
+    <!-- Tabs -->
+    <ul class="tabs">
+      <li *ngFor="let tab of filteredTabs; let i = index">
+        <a (click)="selectTab(i)" [ngClass]="{ active: selectedTab === i }">
+          {{ tab.title }}
+        </a>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab_content">
+      <div
+        class="tabs_item"
+        *ngFor="let tab of filteredTabs; let i = index"
+        [ngClass]="{ active: selectedTab === i }"
+      >
+        <div class="title">
+          <h2>{{ tab.title }}</h2>
+          <p>{{ tab.description }}</p>
+        </div>
+        <div class="faq-accordion">
+          <ul class="accordion">
+            <li class="accordion-item" *ngFor="let item of tab.items">
+              <a
+                class="accordion-title"
+                [ngClass]="{ active: item.isOpen }"
+                (click)="toggleAccordion(item)"
+              >
+                <span class="icon" [ngClass]="item.isOpen ? 'icon-minus' : 'icon-plus'"></span>
+                <span class="question">{{ item.question }}</span>
+              </a>
+              <p class="accordion-content" [ngClass]="{ show: item.isOpen }">
+                {{ item.answer }}
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h4>Ultimate Sports</h4>
+      <p>Your online sports store. We deliver all across Europe.</p>
+    </div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/store">Store</a></li>
+        <li><a href="/about-us">About Us</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Follow Us</h4>
+      <ul class="social-links">
+        <li><a href="#"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+        <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+      </ul>
+    </div>
+  </div> 
+</footer>

@@ -1,0 +1,77 @@
+<!-- Cart Banner -->
+<div class="cart-banner">
+  <h2>
+    <span>Your Cart</span>
+  </h2>
+  <p>
+    Here you’ll find all the items you’ve added to your cart.
+    You can adjust quantities or proceed directly to checkout.
+  </p>
+</div>
+
+<!-- Then your actual cart container -->
+<div class="container mt-5">
+  <!-- cart content here -->
+</div>
+
+
+<div class="container mt-5" *ngIf="basket">
+  <div class="container mt-5">
+
+    <!-- Cart items -->
+    <div *ngIf="basket.items && basket.items.length > 0" class="table-responsive">
+      <table class="table align-middle shadow-sm bg-white rounded">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Total</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of basket.items">
+            <td>
+               <img [src]="item.pictureUrl" class="product-image" alt="image"  width="20%"/>
+            </td>
+            <td class="fw-medium">{{ item.name }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary" (click)="decrementQuantity(item.id)">
+                  <i class="fa fa-minus"></i>
+                </button>
+                <span>{{ item.quantity }}</span>
+                <button class="btn btn-sm btn-outline-secondary" (click)="incrementQuantity(item.id)">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </td>
+            <td>{{ item.price | currency: 'EUR' }}</td>
+            <td>{{ (item.quantity * item.price) | currency: 'EUR' }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-danger" (click)="removeItem(item.id)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Order summary & checkout -->
+    <div class="row justify-content-end mt-4" *ngIf="basket.items.length > 0">
+      <div class="col-md-6">
+        <div class="shadow-sm border rounded p-3 bg-light">
+          <app-order-summary></app-order-summary>
+          <div class="d-grid mt-3">
+            <button class="btn btn-success" routerLink="/checkout">
+              <i class="fa fa-shopping-cart me-2"></i> Proceed to Checkout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

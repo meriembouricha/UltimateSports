@@ -1,0 +1,97 @@
+<!-- Address Banner -->
+<div class="address-banner">
+  <div class="address-banner-content">
+    <h2>
+      <br>
+      <span style="color: #fff;">Contact informations</span>&nbsp;
+    </h2>
+    <p>
+      Please fill in your delivery information so that we can process your orders quickly and efficiently.
+    </p>
+  </div>
+</div>
+
+
+<div class="container mt-5">
+  <div class="row g-4">
+    <!-- Checkout Steps -->
+    <div class="col-md-8">
+      <!-- Step Navigation -->
+      <ul class="nav nav-pills mb-4 bg-light p-2 rounded shadow-sm">
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            [class.active]="currentStep === 'address'"
+            (click)="setCurrentStep('address')"
+          >
+            <i class="fa fa-map-marker-alt me-1"></i> Address
+          </a>
+        </li>
+        <li class="nav-item me-2">
+          <a
+            class="nav-link"
+            [class.active]="currentStep === 'shipment'"
+            (click)="setCurrentStep('shipment')"
+          >
+            <i class="fa fa-truck me-1"></i> Shipment
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            [class.active]="currentStep === 'review'"
+            (click)="setCurrentStep('review')"
+          >
+            <i class="fa fa-check me-1"></i> Review
+          </a>
+        </li>
+      </ul>
+
+      <!-- Step Content -->
+      <div class="bg-white p-4 rounded shadow-sm">
+        <div *ngIf="currentStep === 'address'">
+          <app-address></app-address>
+        </div>
+        <div *ngIf="currentStep === 'shipment'">
+          <app-shipment></app-shipment>
+        </div>
+        <div *ngIf="currentStep === 'review'">
+          <app-review></app-review>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary Sidebar -->
+    <div class="col-md-4">
+      <div class="bg-white p-3 rounded shadow-sm border">
+        <app-order-summary></app-order-summary>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h4>Ultimate Sports</h4>
+      <p>Your online sports store. We deliver all over Europe.</p>
+    </div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/store">Shop</a></li>
+        <li><a href="/about-us">About Us</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Follow Us</h4>
+      <ul class="social-links">
+        <li><a href="#"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+        <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+      </ul>
+    </div>
+  </div> 
+</footer>

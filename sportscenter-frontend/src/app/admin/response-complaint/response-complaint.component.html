@@ -1,0 +1,35 @@
+<div class="response-form-container">
+  <h2 class="title">📩 Répondre à la réclamation</h2>
+  
+  <form (ngSubmit)="submitResponse()" class="response-form">
+    <div class="form-group">
+      <label for="responseText">✍️ Votre réponse :</label>
+      <textarea 
+        id="responseText" 
+        name="responseText" 
+        [(ngModel)]="responseText" 
+        required 
+        placeholder="Rédigez votre réponse ici..."
+        [disabled]="isLoading"
+        rows="5"
+      ></textarea>
+    </div>
+
+    <button 
+      type="submit" 
+      class="btn-submit"
+      [disabled]="isLoading || !responseText.trim()"
+    >
+      <span *ngIf="!isLoading">🚀 Envoyer</span>
+      <span *ngIf="isLoading">⏳ Envoi en cours...</span>
+    </button>
+  </form>
+
+  <!-- Afficher la réponse après envoi -->
+  <div *ngIf="existingResponse" class="existing-response">
+    <h3>📨 Votre réponse :</h3>
+    <div class="response-content">
+      <p>{{ getResponseText(existingResponse) }}</p>
+    </div>
+  </div>
+</div>

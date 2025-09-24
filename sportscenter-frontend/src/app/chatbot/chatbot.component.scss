@@ -1,0 +1,60 @@
+/* Card générale */
+.chatbot-card {
+  border-radius: 1rem;
+  border: none;
+}
+
+/* Header */
+.chatbot-card .card-header {
+  background-color: #c91d1d; /* rouge */
+  color: #fff;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+/* Badge "Chatbot AI" */
+.chatbot-card .card-header .badge {
+  background-color: #fff; /* blanc pour contraste */
+  color: #c91d1d; /* texte rouge */
+  font-weight: bold;
+}
+
+/* Corps de chat */
+.chat-output p {
+  word-wrap: break-word;
+}
+
+/* Messages utilisateur */
+.chatbot-card .badge.bg-primary {
+  background-color: #c91d1d; /* rouge */
+}
+
+/* Messages bot */
+.chatbot-card .badge.bg-light {
+  background-color: #f8d7da; /* rouge clair / rose pâle */
+  color: #c91d1d; /* texte rouge foncé */
+}
+
+/* Input focus */
+.form-control:focus {
+  box-shadow: none;
+  border-color: #c91d1d; /* rouge */
+}
+
+/* Bouton envoyer */
+.chatbot-card .btn-primary {
+  background-color: #c91d1d; /* rouge */
+  border-color: #c91d1d;
+}
+
+.chatbot-card .btn-primary:hover {
+  background-color: #b91919; /* rouge plus foncé au hover */
+  border-color: #b91919;
+}
+
+/* Footer */
+.chatbot-card .card-footer {
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  background-color: #fff;
+}

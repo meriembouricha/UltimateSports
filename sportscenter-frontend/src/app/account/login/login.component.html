@@ -1,0 +1,90 @@
+<div class="login-page">
+  <div class="login-card shadow-lg">
+    <!-- Logo and title -->
+    <div class="text-center mb-4">
+      <img src="/assets/images/logologin.jpg" alt="Sports Center" width="170" />
+      <h2 class="fw-bold text-dark">Welcome</h2>
+      <p class="text-muted">Log in to continue</p>
+    </div>
+
+    <!-- Login form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Username -->
+      <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa fa-user"></i></span>
+        <input type="text" class="form-control" formControlName="username" placeholder="Username" autocomplete="off" />
+      </div>
+      <div *ngIf="loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched"
+           class="text-danger mb-2">This field is required</div>
+
+      <!-- Password with eye icon -->
+      <div class="input-group mb-3">
+        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="form-control"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()" tabindex="-1">
+          <i [ngClass]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+        </button>
+      </div>
+      <div *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched"
+           class="text-danger mb-2">This field is required</div>
+
+      <!-- Remember me -->
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="rememberMe" formControlName="rememberMe" />
+        <label class="form-check-label" for="rememberMe">Remember me</label>
+      </div>
+
+      <!-- Login button -->
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-dark" [disabled]="!loginForm.valid">Login</button>
+      </div>
+
+      <!-- Forgot password -->
+      <div class="text-center">
+        <a href="javascript:void(0)" class="small text-decoration-none" (click)="openForgotModal()">
+          Forgot password?
+        </a>
+      </div>
+    </form>
+
+    <hr />
+
+    <!-- Sign-up section -->
+    <div class="text-center signup-section mt-4">
+      <p class="mb-2 fw-semibold">Sign up to enjoy our exclusive offers!</p>
+      <a [routerLink]="['/account/register']" class="btn btn-signup btn-lg">
+        <i class="fa fa-shopping-cart me-2"></i>Create an account to shop
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotModal" tabindex="-1" aria-labelledby="forgotModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="forgotModalLabel">Password Recovery</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="forgotForm" (ngSubmit)="submitForgotPassword()">
+          <div class="mb-3">
+            <label for="forgotEmail" class="form-label">Your email</label>
+            <input type="email" class="form-control" id="forgotEmail" formControlName="email" placeholder="Enter your email" />
+            <div *ngIf="forgotForm.get('email')?.invalid && forgotForm.get('email')?.touched" class="text-danger mt-1">
+              Please enter a valid email.
+            </div>
+          </div>
+          <div *ngIf="forgotMessage" class="alert alert-info">{{ forgotMessage }}</div>
+          <button type="submit" class="btn btn-dark w-100" [disabled]="forgotForm.invalid">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

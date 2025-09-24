@@ -1,0 +1,132 @@
+/* Bannière Panier pleine largeur */
+.cart-banner {
+  width: 100%; /* prend toute la largeur */
+  text-align: center;
+  padding: 120px 20px 90px 20px; 
+  background: linear-gradient(135deg, #b31f1f, #363636);
+  color: white;
+  box-sizing: border-box; /* inclut le padding dans la largeur */
+
+  h2 {
+    font-size: 36px;
+    font-weight: bold; 
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+
+    span:first-child {
+      color: #fff; /* "Panier" en blanc */
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    span:last-child {
+      color: #ffffff; /* "Ultimate Sports" en rouge */
+      text-shadow: 0 0 10px rgba(160, 16, 16, 0.7);
+    }
+  }
+
+  p {
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 700px;
+     line-height: 2; 
+    margin: 0 auto;
+    color: #cfcfcf;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cart-banner {
+    padding: 60px 15px 70px 15px;
+
+    h2 {
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 15px;
+    }
+  }
+}
+
+/* Panier vide */
+.empty-cart img {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.empty-cart h5 {
+  font-weight: 500;
+  color: #666;
+}
+
+.empty-cart p {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.empty-cart .cta-btn {
+  background-color: #c91d1d;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  margin-top: 40px;
+  padding: 12px 25px;
+  transition: 0.3s;
+  text-decoration: none;
+}
+
+.empty-cart .cta-btn:hover {
+  background-color: #b91919;
+  transform: scale(1.05);
+}
+
+/* Tableau panier */
+.table-responsive {
+  margin-top: 30px;
+}
+
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  padding: 12px 15px;
+}
+
+.table th {
+  font-weight: 600;
+  color: #444;
+  background-color: #f8f8f8;
+}
+
+.table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+img.rounded {
+  border-radius: 8px;
+}
+
+/* Boutons panier */
+.btn-outline-secondary,
+.btn-outline-danger {
+  transition: all 0.2s;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-danger:hover {
+  transform: scale(1.05);
+}
+
+/* Résumé commande */
+.shadow-sm.border.rounded.p-3.bg-light {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 20px;
+}

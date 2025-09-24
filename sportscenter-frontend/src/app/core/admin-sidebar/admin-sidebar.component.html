@@ -1,0 +1,51 @@
+<aside class="admin-sidebar" [class.collapsed]="isCollapsed">
+  <button class="toggle-btn" (click)="toggleSidebar()">
+    <i class="fas" [ngClass]="{'fa-chevron-left': !isCollapsed, 'fa-chevron-right': isCollapsed}"></i>
+  </button>
+
+  <ul>
+    <!-- 🔹 Si ce n’est PAS un livreur, on affiche toutes les options -->
+    <ng-container *ngIf="!isLivreur; else livreurMenu">
+      <li>
+        <a routerLink="/admin/users">
+          <i class="fas fa-users"></i>
+          <span *ngIf="!isCollapsed">Gestion des utilisateurs</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/products">
+          <i class="fas fa-box"></i>
+          <span *ngIf="!isCollapsed">Gestion des produits</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/complaints">
+          <i class="fas fa-exclamation-circle"></i>
+          <span *ngIf="!isCollapsed">Gestion des réclamations</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/stock">
+          <i class="fas fa-warehouse"></i>
+          <span *ngIf="!isCollapsed">Gestion du stock</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/orders">
+          <i class="fas fa-shopping-cart"></i>
+          <span *ngIf="!isCollapsed">Gestion des commandes</span>
+        </a>
+      </li>
+    </ng-container>
+
+    <!-- 🔹 Si c’est un livreur, on affiche seulement "commandes" -->
+    <ng-template #livreurMenu>
+      <li>
+        <a routerLink="/admin/orders">
+          <i class="fas fa-shopping-cart"></i>
+          <span *ngIf="!isCollapsed">Gestion des commandes</span>
+        </a>
+      </li>
+    </ng-template>
+  </ul>
+</aside>

@@ -1,0 +1,84 @@
+/* Banner for My Complaints */
+.complaint-search {
+  text-align: center;
+  padding: 40px 20px 90px 20px;
+  background: linear-gradient(135deg, #b31f1f, #363636);
+  color: white;
+}
+
+.complaint-search h2 {
+  font-size: 36px;
+  margin-top: 80px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.complaint-search h2 span {
+  color: #b91919; 
+  text-shadow: 0 0 10px rgba(160, 16, 16, 0.7);
+}
+
+.complaint-search p {
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+  color: #cfcfcf;
+}
+
+/* Complaints list */
+.complaints-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px 20px;
+  margin-top: -60px; /* to slightly overlay the banner if desired */
+}
+
+.complaint-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.complaint-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.response-section {
+  background: #e0f7fa;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.no-response, .no-complaints {
+  font-style: italic;
+  color: #888;
+}
+
+.cta-btn {
+  background-color: #c91d1d;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 14px 0;
+  margin-top: 15px;
+  transition: 0.3s;
+}
+
+.cta-btn:hover {
+  background-color: #b91919;
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .complaints-area {
+    padding: 20px;
+  }
+}

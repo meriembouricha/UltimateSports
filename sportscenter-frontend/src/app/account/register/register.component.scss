@@ -1,0 +1,64 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('https://images.unsplash.com/photo-1554284126-aa88f22d8b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
+  position: relative;
+  padding: 20px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+  }
+
+  .register-card {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
+
+  .input-group-text {
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #555;
+  }
+
+  .form-control {
+    border: 1px solid #ddd;
+    border-left: none;
+  }
+
+  .btn-dark {
+    background: linear-gradient(90deg,#cc0000,#ff3333);
+    border-radius: 30px;
+    font-weight: bold;
+    border: none;
+  }
+
+  .btn-dark:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(204,0,0,0.3);
+  }
+
+  a.link-red {
+    color: #cc0000;
+    text-decoration: none;
+    font-weight: bold;
+
+    &:hover {
+      color: #ff3333;
+      text-decoration: underline;
+    }
+  }
+
+  .text-danger { color: #cc0000; }
+  .text-success { color: #28a745; }
+}

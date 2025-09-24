@@ -1,0 +1,122 @@
+<div class="page-container">
+  <!-- Main Content -->
+  <div class="complaint-section">
+    <div class="complaint-search">
+      <h2>
+        <span style="color: #fff;">Help Center</span>&nbsp;
+        <span>Ultimate Sports</span>
+      </h2>
+      <p>
+         Need assistance with your orders, payments, or products?  
+        Our team is here to support you and ensure a smooth shopping experience.
+      </p>
+    </div>
+
+    <div class="complaint-area container">
+      <!-- Formulaire -->
+      <div class="complaint-col form-col">
+        <div class="complaint-card">
+          <form (ngSubmit)="submitForm()">
+            <!-- Subject -->
+            <div class="mb-3">
+              <label for="objet" class="form-label fw-semibold">
+                <i class="fas fa-tag me-2 text-muted"></i>What is your request about?
+              </label>
+              <select class="form-select" id="objet" [(ngModel)]="objet" name="objet" (change)="checkOtherOption()">
+                <option value="" disabled selected>Select a topic</option>
+                <option value="livraison">Delivery issue</option>
+                <option value="produit_defectueux">Defective or wrong item</option>
+                <option value="erreur_commande">Order error</option>
+                <option value="paiement">Payment issue</option>
+                <option value="retour_remboursement">Returns & refunds</option>
+                <option value="service_client">Customer support</option>
+                <option value="autre">Other</option>
+              </select>
+            </div>
+
+            <!-- Other Subject -->
+            <div class="mb-3" *ngIf="objet === 'autre'">
+              <label for="autreObjet" class="form-label fw-semibold">
+                <i class="fas fa-pencil-alt me-2 text-muted"></i>Please specify
+              </label>
+              <input type="text" class="form-control" id="autreObjet" name="autreObjet" [(ngModel)]="autreObjet" />
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+              <label for="description" class="form-label fw-semibold">
+                <i class="fas fa-align-left me-2 text-muted"></i>Tell us more
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                class="form-control"
+                rows="4"
+                [(ngModel)]="description"
+              ></textarea>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="cta-btn w-100" [disabled]="loading">
+              <span *ngIf="!loading">Submit request</span>
+              <span *ngIf="loading"><i class="fas fa-spinner fa-spin me-2"></i>Sending...</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Chatbot -->
+      <div class="complaint-col chatbot-col">
+        <app-chatbot></app-chatbot>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section container mt-5">
+      <div class="faq-card">
+        <h4>Quick help</h4>
+        <ul>
+          <li><i class="fas fa-truck"></i> Track your delivery</li>
+          <li><i class="fas fa-box-open"></i> Missing or damaged item</li>
+          <li><i class="fas fa-credit-card"></i> Payment issues</li>
+          <li><i class="fas fa-undo-alt"></i> Returns & refunds</li>
+          <li><i class="fas fa-headset"></i> Contact our support team</li>
+        </ul>
+        <p>Check out our <a href="/faq" class="faq-link">full FAQ</a> for more information.</p>
+      </div>
+    </section>
+  </div>
+
+  <br>
+    <br>
+    
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h4>Ultimate Sports</h4>
+        <p>Your online sports shop. We deliver all over Europe.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/store">Store</a></li>
+          <li><a href="/about-us">About Us</a></li>
+          <li><a href="/faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Follow Us</h4>
+        <ul class="social-links">
+          <li><a href="#"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2025 Ultimate Sports. All rights reserved.
+    </div>
+  </footer>
+</div>

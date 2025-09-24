@@ -1,0 +1,70 @@
+.modern-sidebar {
+  width: 240px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: linear-gradient(to bottom, #2f3b52, #1f2937);
+  color: white;
+  padding: 20px 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  font-size: 1.3rem;
+  text-align: center;
+  padding: 12px 0;
+  color: white;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.sidebar-nav .nav-item {
+  width: 100%;
+}
+
+.sidebar-nav .nav-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  color: #cbd5e1;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  transition: background 0.3s, color 0.3s, border-left 0.3s;
+  text-decoration: none;
+  box-sizing: border-box;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-left: 3px solid #0d6efd;
+  padding-left: 17px;
+}
+
+.sidebar-nav .nav-link i {
+  margin-right: 10px;
+}
+
+.sidebar-nav .nav-link.text-danger {
+  color: #ef4444 !important;
+  font-weight: bold;
+  margin-top: auto;
+}
+
+.sidebar-nav .nav-link.text-danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+  padding-left: 17px;
+}

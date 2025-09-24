@@ -1,0 +1,87 @@
+/* Product Details Component SCSS */
+.main-content {
+  padding-top: 100px;
+}
+
+.pt-navbar-offset {
+  padding-top: 150px;
+}
+
+.product-image-wrapper {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-product-image {
+  max-height: 450px;
+  object-fit: contain;
+  transition: transform 0.2s ease-in-out;
+}
+
+.main-product-image:hover {
+  transform: scale(1.05);
+}
+
+.product-name {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  color: #111;
+}
+
+.stars {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  display: flex;
+  gap: 5px;
+}
+
+.star.filled {
+  color: #FFD700;
+}
+
+/* Container for variants */
+.variants-container {
+  margin-bottom: 20px;
+}
+
+.variant-label {
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.variant-option-btn {
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.variant-option-btn:hover {
+  background-color: #e9ecef;
+}
+
+.variant-option-btn.selected {
+  border-color: #0d6efd;
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+body {
+  padding-top: 80px;
+}

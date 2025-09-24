@@ -1,0 +1,125 @@
+<div class=" store-page container mt-4">
+  <div class="row">
+    <div class="col-12 text-center mb-4">
+      <br>
+            <h1 class="display-5 fw-bold">Welcome to {{ title }}</h1>
+      <p class="text-muted">Your one-stop destination for all your shopping needs.</p>
+    </div>
+
+    <app-recommended-products
+      *ngIf="recommendedProducts.length > 0"
+      [products]="recommendedProducts">
+    </app-recommended-products>
+
+
+
+    <!-- Sidebar Filters -->
+    <div class="col-md-3">
+      <div class="" style="top: 20px;">
+        <div class="border rounded p-3 shadow-sm">
+          <h5 class="text-primary">Sort</h5>
+          <select class="form-select mb-3" [(ngModel)]="storeData.selectedSort" (change)="onSortChange()">
+            <option value="asc">Name Ascending</option>
+            <option value="desc">Name Descending</option>
+          </select>
+
+          <!-- Scrollable Brands -->
+          <h5 class="text-primary">Brands</h5>
+          <div class="scroll-box mb-4" style="margin-bottom: 40px;">
+            <ul class="list-group">
+              <li
+                class="list-group-item list-group-item-action"
+                *ngFor="let brand of storeData.brands"
+                [class.active]="(storeData.selectedBrand?.id === 0 && brand.id === 0) || (storeData.selectedBrand === brand && storeData.selectedBrand.id !== 0)"
+                (click)="selectBrand(brand)"
+                style="cursor: pointer;"
+              >
+                {{ brand.name }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Scrollable Types -->
+          <h5 class="text-primary">Types</h5>
+          <div class="scroll-box">
+            <ul class="list-group">
+              <li
+                class="list-group-item list-group-item-action"
+                *ngFor="let type of storeData.types"
+                [class.active]="(storeData.selectedType?.id === 0 && type.id === 0) || (storeData.selectedType === type && storeData.selectedType.id !== 0)"
+                (click)="selectType(type)"
+                style="cursor: pointer;"
+              >
+                {{ type.name }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="col-md-9">
+      <div class="d-flex justify-content-end align-items-center mb-3">
+        <input
+          type="text"
+          class="form-control me-2"
+          style="max-width: 200px;"
+          placeholder="Search"
+          [(ngModel)]="storeData.search"
+        />
+        <button class="btn btn-outline-primary me-2" (click)="onSearch()">Search</button>
+        <button class="btn btn-outline-secondary" (click)="onReset()">Reset</button>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-4" *ngFor="let product of storeData.products">
+          <app-product-item [product]="product"></app-product-item>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center mt-4">
+        <pagination
+        [totalItems]="storeData.totalElements"
+        [(ngModel)]="storeData.currentPage"
+        [itemsPerPage]="storeData.pageSize"
+        [maxSize]="5"
+        [boundaryLinks]="true"
+        [rotate]="true"
+        (pageChanged)="pageChanged($event)"
+        class="d-flex justify-content-center"
+      ></pagination>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+ <!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h4>Ultimate Sports</h4>
+      <p>Your online sports store. We deliver all over Europe.</p>
+    </div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/store">Shop</a></li>
+        <li><a href="/about-us">About Us</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Follow Us</h4>
+      <ul class="social-links">
+        <li><a href="#"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+        <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+      </ul>
+    </div>
+  </div> 
+</footer>

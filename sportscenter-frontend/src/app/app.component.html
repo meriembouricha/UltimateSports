@@ -1,0 +1,8 @@
+<!-- Afficher la nav-bar et section-header seulement si ce n'est pas une route admin ou livreur -->
+<div *ngIf="!isAdminRoute && !isRouteAdmin && !isRouteLivreur">
+  <app-nav-bar></app-nav-bar>
+  <app-section-header></app-section-header>
+</div>
+
+<!-- Outlet principal pour toutes les pages -->
+<router-outlet></router-outlet>

@@ -1,0 +1,51 @@
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-lg chatbot-card" style="max-width: 500px; width: 100%;">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">💬 Ultimate Sports</h5>
+      <span class="badge bg-light text-primary">Chatbot AI</span>
+    </div>
+
+    <div class="card-body" style="height: 400px; overflow-y: auto;" id="chatBody">
+      <div *ngIf="chatHistory.length === 0" class="text-muted text-center my-5">
+        Ask a question to start the conversation...
+      </div>
+
+      <div *ngFor="let chat of chatHistory" class="mb-3">
+        <div *ngIf="chat.type === 'user'" class="text-end">
+          <span class="badge bg-primary rounded-pill p-2">
+            {{ chat.message }}
+          </span>
+        </div>
+        <div *ngIf="chat.type === 'bot'" class="text-start">
+          <span class="badge bg-light shadow-sm rounded p-2 text-dark">
+            {{ chat.message }}
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="text-center my-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading...</p>
+      </div>
+    </div>
+
+    <div class="card-footer bg-white d-flex gap-2">
+      <input
+        type="text"
+        class="form-control rounded-pill"
+        placeholder="Ask your question..."
+        [(ngModel)]="question"
+        (keyup.enter)="sendQuestion()"
+      />
+      <button
+        class="btn btn-primary rounded-pill"
+        (click)="sendQuestion()"
+        [disabled]="loading"
+      >
+        Send
+      </button>
+    </div>
+  </div>
+</div>

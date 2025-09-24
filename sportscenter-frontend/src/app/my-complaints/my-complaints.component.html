@@ -1,0 +1,37 @@
+<div class="page-container">
+  <!-- Banner -->
+  <div class="complaint-search">
+    <h2>
+      <span style="color: #fff;">My Complaints</span>&nbsp;
+      <span>Ultimate Sports</span>
+    </h2>
+    <p>
+      Here you can see all your complaints and the responses from our support team.
+      Manage and track them easily to ensure your shopping experience is smooth.
+    </p>
+  </div>
+
+  <!-- Complaints List -->
+  <div class="complaints-area container">
+    <div *ngIf="complaints.length === 0" class="no-complaints">
+      No complaints found for this user.
+    </div>
+
+    <div class="complaints-list" *ngFor="let complaint of complaints">
+      <div class="complaint-card">
+        <h3>Your Complaint</h3>
+        <p>{{ complaint.descComplaint }}</p>
+
+        <!-- Section réponse admin avec parsing du JSON -->
+        <div *ngIf="complaint.response" class="response-section">
+          <h4>Admin Response</h4>
+          <p>{{ getResponseText(complaint.response) }}</p>
+        </div>
+
+        <div *ngIf="!complaint.response" class="no-response">
+          <p>No response yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

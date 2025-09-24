@@ -1,0 +1,26 @@
+<div class="profile-page">
+  <div class="profile-card">
+    <h2>Welcome in your profile</h2>
+<span class="username-display">{{ username }}</span>
+
+    
+    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+      <div class="mb-3">
+        <label for="oldPassword" class="form-label">Mot de passe actuel</label>
+        <input id="oldPassword" type="password" class="form-control" formControlName="oldPassword" />
+      </div>
+
+      <div class="mb-3">
+        <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+        <input id="newPassword" type="password" class="form-control" formControlName="newPassword" />
+      </div>
+
+      <div class="mb-3">
+        <label for="confirmNewPassword" class="form-label">Confirmer le nouveau mot de passe</label>
+        <input id="confirmNewPassword" type="password" class="form-control" formControlName="confirmNewPassword" />
+      </div>
+
+      <button type="submit" class="btn btn-dark">Modifier le mot de passe</button>
+    </form>
+  </div>
+</div>
