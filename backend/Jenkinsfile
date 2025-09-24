@@ -105,7 +105,7 @@ pipeline {
             steps {
                 dir('backend') {
                     withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USR', passwordVariable: 'NEXUS_PSW')]) {
-                        sh "mvn deploy -s jenkins-settings.xml -DskipTests"
+                        sh "mvn deploy -s jenkins-settings.xml"
                     }
                 }
             }
