@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+  redis:
+    host: localhost
+    port: 6379
+    password: 
+    ssl:
+      enabled: false
+
+# Disable security for tests
+spring.security:
+  user:
+    name: test
+    password: test
+
+# Disable mail for tests
+spring.mail:
+  host: localhost
+  port: 587
+  username: test@test.com
+  password: test
+
+# JWT settings for tests
+jwt:
+  secret: test-secret-key-for-testing-only
+  expiration: 86400000
+
+# Stripe settings for tests
+stripe:
+  api:
+    key: test-key
+
+# Recommendation service for tests
+recommendation:
+  service:
+    url: http://localhost:8000/recommendations
