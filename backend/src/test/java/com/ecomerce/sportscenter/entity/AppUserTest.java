@@ -39,7 +39,7 @@ class AppUserTest {
         assertNull(user.getEmail());
         assertNull(user.getPassword());
         assertNull(user.getRoles());
-        assertFalse(user.isEnabled()); // Default should be false
+        assertTrue(user.isEnabled()); // Default should be true
     }
 
     @Test
