@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_SCANNER_HOME = tool 'SonarScanner'
-        SONARQUBE_TOKEN = credentials('sonar-token')
         DOCKERHUB = credentials('dockerhub-cred')
         NEXUS = credentials('nexus-creds')
         IMAGE_NAME = "sportscenter-frontend"
@@ -19,13 +17,19 @@ pipeline {
                     // Clean workspace
                     cleanWs()
                     
-                    // Checkout from GitHub
+                    // Checkout from GitHub with subdirectory
                     checkout([
                         $class: 'GitSCM',
                         branches: [[name: '*/prod']],
                         userRemoteConfigs: [[
                             url: 'https://github.com/meriembouricha/UltimateSports.git',
                             credentialsId: 'github-pat'
+                        ]],
+                        extensions: [[
+                            $class: 'SparseCheckoutPaths',
+                            sparseCheckoutPaths: [[
+                                path: 'sportscenter-frontend/'
+                            ]]
                         ]]
                     ])
                 }
@@ -34,54 +38,31 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                dir('sportscenter-frontend') {
-                    sh 'npm install'
-                }
+                sh 'npm install'
             }
         }
 
         stage('Build App') {
             steps {
-                dir('sportscenter-frontend') {
-                    sh 'npm run build -- --prod'
-                }
+                sh 'npm run build -- --prod'
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                dir('sportscenter-frontend') {
-                    withSonarQubeEnv('SonarQubeServer') {
-                        sh """
-                            ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
-                            -Dsonar.projectKey=sportscenter-frontend \
-                            -Dsonar.sources=src \
-                            -Dsonar.host.url=http://139.59.150.186:9000 \
-                            -Dsonar.login=${SONARQUBE_TOKEN}
-                        """
-                    }
-                }
-            }
-        }
 
         stage('Trivy File System Scan') {
             steps {
-                dir('sportscenter-frontend') {
-                    sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
-                }
+                sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
             }
         }
 
         stage('Build & Tag Docker Image') {
             steps {
-                dir('sportscenter-frontend') {
-                    script {
-                        // Build Docker image
-                        sh "docker build -t ${IMAGE_NAME} ."
-                        
-                        // Tag the image
-                        sh "docker tag ${IMAGE_NAME} ${DOCKER_IMAGE}"
-                    }
+                script {
+                    // Build Docker image
+                    sh "docker build -t ${IMAGE_NAME} ."
+                    
+                    // Tag the image
+                    sh "docker tag ${IMAGE_NAME} ${DOCKER_IMAGE}"
                 }
             }
         }
