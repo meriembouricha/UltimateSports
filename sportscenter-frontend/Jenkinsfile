@@ -3,11 +3,13 @@ pipeline {
 
     environment {
         SONARQUBE_SCANNER_HOME = tool 'SonarScanner'
-        SONARQUBE_TOKEN = credentials('sonarqube-token')
-        IMAGE_NAME = "sports-center-frontend"
+        SONARQUBE_TOKEN = credentials('sonar-token')
+        DOCKERHUB = credentials('dockerhub-cred')
+        NEXUS = credentials('nexus-creds')
+        IMAGE_NAME = "sportscenter-frontend"
         VERSION = "latest"
-        NEXUS_REGISTRY = "localhost:5003"
-        ACR_REGISTRY = "sportscenteracr6388.azurecr.io"
+        DOCKER_IMAGE = 'meriembouricha/sportscenter-frontend'
+        TMPDIR = "/var/trivy-tmp"
     }
 
     stages {
@@ -31,53 +33,68 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv('SonarQubeServer') {
                     sh """
                         ${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=frontend \
+                        -Dsonar.projectKey=sportscenter-frontend \
                         -Dsonar.sources=src \
-                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.host.url=http://139.59.150.186:9000 \
                         -Dsonar.login=${SONARQUBE_TOKEN}
                     """
                 }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Trivy File System Scan') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${VERSION} ."
+                sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
             }
         }
 
-        stage('Push to Nexus') {
+        stage('Build & Tag Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'nexus-docker', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh """
-                        docker login ${NEXUS_REGISTRY} -u $USER -p $PASS
-                        docker tag ${IMAGE_NAME}:${VERSION} ${NEXUS_REGISTRY}/${IMAGE_NAME}:${VERSION}
-                        docker push ${NEXUS_REGISTRY}/${IMAGE_NAME}:${VERSION}
-                    """
+                script {
+                    // Build Docker image
+                    sh "docker build -t ${IMAGE_NAME} ."
+                    
+                    // Tag the image
+                    sh "docker tag ${IMAGE_NAME} ${DOCKER_IMAGE}"
                 }
             }
         }
 
-
-        stage('Push to ACR') {
+        stage('Trivy Docker Image Scan') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
-                    sh """
-                        docker login ${ACR_REGISTRY} -u $ACR_USER -p $ACR_PASS
-                        docker tag ${IMAGE_NAME}:${VERSION} ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION}
-                        docker push ${ACR_REGISTRY}/${IMAGE_NAME}:${VERSION}
-                    """
+                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL ${DOCKER_IMAGE}"
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    // Login to Docker Hub
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
+                        sh "echo $DOCKERHUB_PSW | docker login --username $DOCKERHUB_USR --password-stdin"
+                    }
+                    
+                    // Push the image
+                    sh "docker push ${DOCKER_IMAGE}"
                 }
             }
         }
     }
 
     post {
+        failure {
+            echo "Pipeline failed."
+        }
+        success {
+            echo "Pipeline completed successfully."
+        }
         always {
-            echo 'Pipeline finished.'
+            // Clean up Docker images to save space
+            sh "docker rmi ${IMAGE_NAME} || true"
+            sh "docker rmi ${DOCKER_IMAGE} || true"
         }
     }
 }
