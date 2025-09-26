@@ -87,9 +87,7 @@ pipeline {
                         // Use polling instead of webhook
                         def qg = waitForQualityGate(
                             abortPipeline: false,
-                            credentialsId: 'sonar-token',
-                            webhookSecretId: '',
-                            polling: true
+                            credentialsId: 'sonar-token'
                         )
                         if (qg.status != 'OK') {
                             echo "Quality Gate status: ${qg.status}"
