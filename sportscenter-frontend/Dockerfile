@@ -3,7 +3,7 @@ FROM node:20-alpine as build
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm run build --prod
+RUN npm run build -- --prod
 
 # Stage 2: Nginx Server
 FROM nginx:alpine

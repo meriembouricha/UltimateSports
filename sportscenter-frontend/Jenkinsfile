@@ -43,7 +43,7 @@ pipeline {
         stage('Build App') {
             steps {
                 dir('sportscenter-frontend') {
-                    sh 'npm run build --prod'
+                    sh 'npm run build -- --prod'
                 }
             }
         }
