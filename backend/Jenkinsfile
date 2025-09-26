@@ -4,9 +4,9 @@ pipeline {
     environment {
         SONAR_TOKEN = credentials('sonar-token')
         GITHUB_TOKEN = credentials('github-pat')
-        ACR = credentials('acr-user')
+        DOCKERHUB = credentials('dockerhub-cred')
         NEXUS = credentials('nexus-creds')
-        DOCKER_IMAGE = 'sportscenteracr.azurecr.io/sportscenter-backend'
+        DOCKER_IMAGE = 'meriembouricha/sportscenter-backend'
     }
     
     stages {
@@ -123,14 +123,14 @@ pipeline {
                             sh """
                             curl -v -u $NEXUS_USR:$NEXUS_PSW \
                               --upload-file target/site/jacoco-reports-${BUILD_NUMBER}.tar.gz \
-                              http://13.87.106.211:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
+                              http://139.59.150.186:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
                             """
                             
                             // Also upload individual HTML report
                             sh """
                             curl -v -u $NEXUS_USR:$NEXUS_PSW \
                               --upload-file target/site/jacoco/index.html \
-                              http://13.87.106.211:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
+                              http://139.59.150.186:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
                             """
                         }
                     }
@@ -158,11 +158,13 @@ pipeline {
             }
         }
         
-        stage('Push Docker Image to ACR') {
+        stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Login to Azure Container Registry
-                    sh "echo $ACR_PSW | docker login sportscenteracr.azurecr.io --username $ACR_USR --password-stdin"
+                    // Login to Docker Hub
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
+                        sh "echo $DOCKERHUB_PSW | docker login --username $DOCKERHUB_USR --password-stdin"
+                    }
                     
                     // Push the image
                     sh "docker push ${DOCKER_IMAGE}"
