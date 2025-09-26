@@ -50,6 +50,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('sportscenter-frontend') {
+                    // Install sonar-scanner
+                    sh 'npm install -g sonar-scanner'
+                    
                     // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
                     withSonarQubeEnv('SonarQubeServer') {
                         sh """
