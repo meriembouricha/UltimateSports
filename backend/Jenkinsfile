@@ -92,6 +92,10 @@ pipeline {
             steps {
                 dir('backend') {
                     withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USR', passwordVariable: 'NEXUS_PSW')]) {
+                        // Test connection first
+                        sh "curl -u $NEXUS_USR:$NEXUS_PSW http://139.59.150.186:8081/service/rest/v1/status"
+                        
+                        // Deploy to Nexus
                         sh "mvn deploy -s jenkins-settings.xml"
                     }
                 }
