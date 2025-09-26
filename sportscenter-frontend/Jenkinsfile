@@ -18,19 +18,13 @@ pipeline {
                     // Clean workspace
                     cleanWs()
                     
-                    // Checkout from GitHub with subdirectory
+                    // Checkout from GitHub
                     checkout([
                         $class: 'GitSCM',
                         branches: [[name: '*/prod']],
                         userRemoteConfigs: [[
                             url: 'https://github.com/meriembouricha/UltimateSports.git',
                             credentialsId: 'github-pat'
-                        ]],
-                        extensions: [[
-                            $class: 'SparseCheckoutPaths',
-                            sparseCheckoutPaths: [[
-                                path: 'sportscenter-frontend/'
-                            ]]
                         ]]
                     ])
                 }
@@ -39,45 +33,55 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                dir('sportscenter-frontend') {
+                    sh 'npm install'
+                }
             }
         }
 
         stage('Build App') {
             steps {
-                sh 'npm run build -- --prod'
+                dir('sportscenter-frontend') {
+                    sh 'npm run build -- --prod'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
-                withSonarQubeEnv('SonarQubeServer') {
-                    sh """
-                        sonar-scanner \
-                        -Dsonar.projectKey=sportscenter-frontend \
-                        -Dsonar.sources=src \
-                        -Dsonar.host.url=http://139.59.150.186:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
-                    """
+                dir('sportscenter-frontend') {
+                    // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
+                    withSonarQubeEnv('SonarQubeServer') {
+                        sh """
+                            sonar-scanner \
+                            -Dsonar.projectKey=sportscenter-frontend \
+                            -Dsonar.sources=src \
+                            -Dsonar.host.url=http://139.59.150.186:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                        """
+                    }
                 }
             }
         }
 
         stage('Trivy File System Scan') {
             steps {
-                sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
+                dir('sportscenter-frontend') {
+                    sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
+                }
             }
         }
 
         stage('Build & Tag Docker Image') {
             steps {
-                script {
-                    // Build Docker image
-                    sh "docker build -t ${IMAGE_NAME} ."
-                    
-                    // Tag the image
-                    sh "docker tag ${IMAGE_NAME} ${DOCKER_IMAGE}"
+                dir('sportscenter-frontend') {
+                    script {
+                        // Build Docker image
+                        sh "docker build -t ${IMAGE_NAME} ."
+                        
+                        // Tag the image
+                        sh "docker tag ${IMAGE_NAME} ${DOCKER_IMAGE}"
+                    }
                 }
             }
         }
