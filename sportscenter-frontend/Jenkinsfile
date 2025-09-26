@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        SONAR_TOKEN = credentials('sonar-token')
         DOCKERHUB = credentials('dockerhub-cred')
         NEXUS = credentials('nexus-creds')
         IMAGE_NAME = "sportscenter-frontend"
@@ -48,6 +49,20 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
+                withSonarQubeEnv('SonarQubeServer') {
+                    sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=sportscenter-frontend \
+                        -Dsonar.sources=src \
+                        -Dsonar.host.url=http://139.59.150.186:9000 \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    """
+                }
+            }
+        }
 
         stage('Trivy File System Scan') {
             steps {
