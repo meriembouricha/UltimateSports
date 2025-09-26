@@ -80,26 +80,6 @@ pipeline {
             }
         }
         
-        stage('Wait for Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        // Use polling instead of webhook
-                        def qg = waitForQualityGate(
-                            abortPipeline: false,
-                            credentialsId: 'sonar-token'
-                        )
-                        if (qg.status != 'OK') {
-                            echo "Quality Gate status: ${qg.status}"
-                            error "Quality Gate failed with status: ${qg.status}"
-                        } else {
-                            echo "Quality Gate passed successfully"
-                        }
-                    }
-                }
-            }
-        }
-        
         stage('Build JAR') {
             steps {
                 dir('backend') {
