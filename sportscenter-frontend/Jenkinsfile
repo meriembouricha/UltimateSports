@@ -89,17 +89,17 @@ pipeline {
                                     echo "Starting browser detection..."
                                     
                                     # Check if Chrome is already available
-                                    if command -v google-chrome &> /dev/null; then
+                                    if command -v google-chrome >/dev/null 2>&1; then
                                         CHROME_PATH=$(which google-chrome)
                                         echo "Chrome found at: $CHROME_PATH"
                                         CHROME_BIN="$CHROME_PATH"
                                         BROWSER_TYPE="chrome"
-                                    elif command -v chromium-browser &> /dev/null; then
+                                    elif command -v chromium-browser >/dev/null 2>&1; then
                                         CHROME_PATH=$(which chromium-browser)
                                         echo "Chromium found at: $CHROME_PATH"
                                         CHROME_BIN="$CHROME_PATH"
                                         BROWSER_TYPE="chrome"
-                                    elif command -v chromium &> /dev/null; then
+                                    elif command -v chromium >/dev/null 2>&1; then
                                         CHROME_PATH=$(which chromium)
                                         echo "Chromium found at: $CHROME_PATH"
                                         CHROME_BIN="$CHROME_PATH"
@@ -140,12 +140,12 @@ pipeline {
                                     
                                     # Check for Firefox if Chrome is not available
                                     if [ -z "$BROWSER_TYPE" ]; then
-                                        if command -v firefox &> /dev/null; then
+                                        if command -v firefox >/dev/null 2>&1; then
                                             FIREFOX_PATH=$(which firefox)
                                             echo "Firefox found at: $FIREFOX_PATH"
                                             FIREFOX_BIN="$FIREFOX_PATH"
                                             BROWSER_TYPE="firefox"
-                                        elif command -v firefox-esr &> /dev/null; then
+                                        elif command -v firefox-esr >/dev/null 2>&1; then
                                             FIREFOX_PATH=$(which firefox-esr)
                                             echo "Firefox ESR found at: $FIREFOX_PATH"
                                             FIREFOX_BIN="$FIREFOX_PATH"
