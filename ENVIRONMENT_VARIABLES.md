@@ -16,6 +16,18 @@ The application uses a DigitalOcean MySQL database. The following environment va
 - `SPRING_REDIS_PORT`: Redis port (default: 6379)
 - `REDIS_PASSWORD`: Redis password (default: empty)
 
+## Mail Configuration (Gmail SMTP)
+
+- `MAIL_HOST`: SMTP host (default: smtp.gmail.com)
+- `MAIL_PORT`: SMTP port (default: 587)
+- `MAIL_USERNAME`: Gmail username (default: complaints.sportscenter@gmail.com)
+- `MAIL_PASSWORD`: Gmail app password (REQUIRED)
+
+## JWT Configuration
+
+- `JWT_SECRET`: JWT signing secret (default: provided)
+- `JWT_EXPIRATION`: JWT expiration time in milliseconds (default: 86400000)
+
 ## Stripe Configuration
 
 - `STRIPE_SECRET_KEY`: Stripe API secret key (REQUIRED)
@@ -25,6 +37,8 @@ The application uses a DigitalOcean MySQL database. The following environment va
 For Jenkins CI/CD, the following credentials must be configured:
 
 - `db-password`: Database password credential
+- `gmail-password`: Gmail app password credential
+- `stripe-secret-key`: Stripe secret key credential
 - `sonar-token`: SonarQube authentication token
 - `github-pat`: GitHub personal access token
 - `dockerhub-cred`: Docker Hub credentials
@@ -36,7 +50,15 @@ For local development, create a `.env` file in the backend directory with:
 
 ```env
 SPRING_DATASOURCE_PASSWORD=your_database_password_here
+MAIL_PASSWORD=your_gmail_app_password_here
 STRIPE_SECRET_KEY=your_stripe_secret_key_here
+JWT_SECRET=your_jwt_secret_here
+```
+
+Or run the setup script:
+```bash
+cd backend
+./setup-env.sh
 ```
 
 ## Security Note

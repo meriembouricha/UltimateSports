@@ -29,10 +29,10 @@ spring:
         enabled: false
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: complaints.sportscenter@gmail.com
-    password: fzdgzkqneuyedslk
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:complaints.sportscenter@gmail.com}
+    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -41,8 +41,8 @@ spring:
             enable: true
 
 jwt:
-  secret: 2f1d88b1c0b9dcb71c5f2d5be89801906fa2e4d84a3b19b47d3de4e154deeb71
-  expiration: 86400000
+  secret: ${JWT_SECRET:2f1d88b1c0b9dcb71c5f2d5be89801906fa2e4d84a3b19b47d3de4e154deeb71}
+  expiration: ${JWT_EXPIRATION:86400000}
 
 stripe:
   api:

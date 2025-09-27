@@ -9,6 +9,8 @@ pipeline {
         DOCKER_IMAGE = 'meriembouricha/sportscenter-backend'
         TMPDIR = "/var/trivy-tmp"
         SPRING_DATASOURCE_PASSWORD = credentials('db-password')
+        MAIL_PASSWORD = credentials('gmail-password')
+        STRIPE_SECRET_KEY = credentials('stripe-secret-key')
     }
     
     stages {

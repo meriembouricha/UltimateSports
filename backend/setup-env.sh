@@ -17,12 +17,18 @@ SPRING_REDIS_HOST=localhost
 SPRING_REDIS_PORT=6379
 REDIS_PASSWORD=
 
+# Mail Configuration (Gmail SMTP)
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=complaints.sportscenter@gmail.com
+MAIL_PASSWORD=your_gmail_app_password_here
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_here
+JWT_EXPIRATION=86400000
+
 # Stripe Configuration
 STRIPE_SECRET_KEY=your_stripe_secret_key_here
-
-# JWT Configuration (optional - already has defaults)
-# JWT_SECRET=2f1d88b1c0b9dcb71c5f2d5be89801906fa2e4d84a3b19b47d3de4e154deeb71
-# JWT_EXPIRATION=86400000
 EOF
 
 echo "✅ .env file created successfully!"
