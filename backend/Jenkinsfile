@@ -10,7 +10,7 @@ pipeline {
         TMPDIR = "/var/trivy-tmp"
         SPRING_DATASOURCE_PASSWORD = credentials('db-password')
         MAIL_PASSWORD = credentials('gmail-password')
-        STRIPE_SECRET_KEY = credentials('stripe-secret-key')
+        // STRIPE_SECRET_KEY = credentials('stripe-secret-key') // Commented out - credential not configured
     }
     
     stages {
