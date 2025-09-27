@@ -12,7 +12,7 @@ The application uses a DigitalOcean MySQL database. The following environment va
 
 ## Redis Configuration
 
-- `SPRING_REDIS_HOST`: Redis host (default: localhost)
+- `SPRING_REDIS_HOST`: Redis host (default: 139.59.150.186)
 - `SPRING_REDIS_PORT`: Redis port (default: 6379)
 - `REDIS_PASSWORD`: Redis password (default: empty)
 
