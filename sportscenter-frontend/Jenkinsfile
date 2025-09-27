@@ -45,19 +45,38 @@ pipeline {
                 dir('sportscenter-frontend') {
                     script {
                         try {
+                            // Install Chrome for headless testing
+                            sh '''
+                                # Install Chrome dependencies
+                                apt-get update -qq
+                                apt-get install -y -qq wget gnupg
+                                
+                                # Add Google Chrome repository
+                                wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+                                echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+                                
+                                # Install Chrome
+                                apt-get update -qq
+                                apt-get install -y -qq google-chrome-stable
+                                
+                                # Set Chrome binary path
+                                export CHROME_BIN=/usr/bin/google-chrome
+                            '''
+                            
                             // Run unit tests with resource-optimized settings for VM
                             timeout(time: 8, unit: 'MINUTES') {
                                 sh '''
                                     # Set Node.js memory limit to reduce resource usage
                                     export NODE_OPTIONS="--max-old-space-size=1024"
+                                    export CHROME_BIN=/usr/bin/google-chrome
                                     
-                            # Run tests with minimal resource consumption
-                            npm run test -- \
-                                --watch=false \
-                                --browsers=ChromeHeadless \
-                                --code-coverage \
-                                --progress=false \
-                                --reporters=progress,coverage
+                                    # Run tests with minimal resource consumption
+                                    npm run test -- \
+                                        --watch=false \
+                                        --browsers=ChromeHeadless \
+                                        --code-coverage \
+                                        --progress=false \
+                                        --reporters=progress,coverage
                                 '''
                             }
                         } catch (Exception e) {
@@ -80,9 +99,6 @@ pipeline {
                         # Clear npm cache
                         npm cache clean --force || true
                     '''
-                    
-                    // Publish test results (JUnit format)
-                    publishTestResults testResultsPattern: 'sportscenter-frontend/coverage/test-results.xml'
                     
                     // Publish coverage reports
                     publishHTML([
