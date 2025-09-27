@@ -212,29 +212,31 @@ pipeline {
         }
         always {
             // Clean up Docker images and workspace
-            script {
-                try {
-                    // Clean up Docker images to save space
-                    sh "docker rmi ${IMAGE_NAME} || true"
-                    sh "docker rmi ${DOCKER_IMAGE} || true"
-                    
-                    // Clean up workspace to free up disk space
-                    sh '''
-                        # Clean up frontend build artifacts
-                        rm -rf sportscenter-frontend/dist || true
-                        rm -rf sportscenter-frontend/node_modules/.cache || true
-                        rm -rf sportscenter-frontend/.angular/cache || true
-                        rm -rf sportscenter-frontend/coverage/.nyc_output || true
+            node {
+                script {
+                    try {
+                        // Clean up Docker images to save space
+                        sh "docker rmi ${IMAGE_NAME} || true"
+                        sh "docker rmi ${DOCKER_IMAGE} || true"
                         
-                        # Clean up npm cache
-                        cd sportscenter-frontend && npm cache clean --force || true
-                        
-                        # Clean up any temporary files
-                        find . -name "*.tmp" -delete || true
-                        find . -name "*.log" -delete || true
-                    '''
-                } catch (Exception e) {
-                    echo "Cleanup failed: ${e.getMessage()}"
+                        // Clean up workspace to free up disk space
+                        sh '''
+                            # Clean up frontend build artifacts
+                            rm -rf sportscenter-frontend/dist || true
+                            rm -rf sportscenter-frontend/node_modules/.cache || true
+                            rm -rf sportscenter-frontend/.angular/cache || true
+                            rm -rf sportscenter-frontend/coverage/.nyc_output || true
+                            
+                            # Clean up npm cache
+                            cd sportscenter-frontend && npm cache clean --force || true
+                            
+                            # Clean up any temporary files
+                            find . -name "*.tmp" -delete || true
+                            find . -name "*.log" -delete || true
+                        '''
+                    } catch (Exception e) {
+                        echo "Cleanup failed: ${e.getMessage()}"
+                    }
                 }
             }
         }
