@@ -260,7 +260,7 @@ pipeline {
                                 sleep 2
                                 
                                 # Create test reports archive
-                                if [ -d "coverage" ] && [ "$(ls -A coverage 2>/dev/null)" ]; then
+                                if [ -d "coverage" ] && [ "\$(ls -A coverage 2>/dev/null)" ]; then
                                     echo "Creating test reports archive..."
                                     cd coverage
                                     tar -czf test-reports-${BUILD_NUMBER}.tar.gz . 2>/dev/null || {
