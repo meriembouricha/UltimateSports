@@ -45,22 +45,29 @@ pipeline {
                 dir('sportscenter-frontend') {
                     script {
                         try {
-                            // Install Chrome for headless testing
+                            // Check for available browsers and set up Chrome
                             sh '''
-                                # Install Chrome dependencies
-                                apt-get update -qq
-                                apt-get install -y -qq wget gnupg
-                                
-                                # Add Google Chrome repository
-                                wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-                                echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-                                
-                                # Install Chrome
-                                apt-get update -qq
-                                apt-get install -y -qq google-chrome-stable
-                                
-                                # Set Chrome binary path
-                                export CHROME_BIN=/usr/bin/google-chrome
+                                # Check if Chrome is already available
+                                if command -v google-chrome &> /dev/null; then
+                                    echo "Chrome found at: $(which google-chrome)"
+                                    export CHROME_BIN=$(which google-chrome)
+                                elif command -v chromium-browser &> /dev/null; then
+                                    echo "Chromium found at: $(which chromium-browser)"
+                                    export CHROME_BIN=$(which chromium-browser)
+                                elif command -v chromium &> /dev/null; then
+                                    echo "Chromium found at: $(which chromium)"
+                                    export CHROME_BIN=$(which chromium)
+                                else
+                                    echo "No Chrome/Chromium found, trying to install..."
+                                    # Try to install Chrome with sudo
+                                    sudo apt-get update -qq && \
+                                    sudo apt-get install -y -qq wget gnupg && \
+                                    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
+                                    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list && \
+                                    sudo apt-get update -qq && \
+                                    sudo apt-get install -y -qq google-chrome-stable && \
+                                    export CHROME_BIN=/usr/bin/google-chrome
+                                fi
                             '''
                             
                             // Run unit tests with resource-optimized settings for VM
@@ -71,12 +78,24 @@ pipeline {
                                     export CHROME_BIN=/usr/bin/google-chrome
                                     
                                     # Run tests with minimal resource consumption
-                                    npm run test -- \
-                                        --watch=false \
-                                        --browsers=ChromeHeadless \
-                                        --code-coverage \
-                                        --progress=false \
-                                        --reporters=progress,coverage
+                                    # Try Chrome first, fallback to Firefox
+                                    if [ -n "$CHROME_BIN" ]; then
+                                        echo "Running tests with Chrome"
+                                        npm run test -- \
+                                            --watch=false \
+                                            --browsers=ChromeHeadless \
+                                            --code-coverage \
+                                            --progress=false \
+                                            --reporters=progress,coverage
+                                    else
+                                        echo "Running tests with Firefox"
+                                        npm run test -- \
+                                            --watch=false \
+                                            --browsers=FirefoxHeadless \
+                                            --code-coverage \
+                                            --progress=false \
+                                            --reporters=progress,coverage
+                                    fi
                                 '''
                             }
                         } catch (Exception e) {
