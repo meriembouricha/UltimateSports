@@ -168,7 +168,7 @@ pipeline {
                             }
                         } catch (Exception e) {
                             echo "Unit tests failed: ${e.getMessage()}"
-                            # Don't fail the pipeline if it's just a browser availability issue
+                            // Don't fail the pipeline if it's just a browser availability issue
                             if (e.getMessage().contains("No suitable browser found")) {
                                 echo "Unit tests skipped due to missing browser support - continuing pipeline"
                                 currentBuild.result = 'SUCCESS'
