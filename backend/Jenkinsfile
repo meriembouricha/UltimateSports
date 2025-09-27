@@ -8,8 +8,8 @@ pipeline {
         NEXUS = credentials('nexus-creds')
         DOCKER_IMAGE = 'meriembouricha/sportscenter-backend'
         TMPDIR = "/var/trivy-tmp"
-        SPRING_DATASOURCE_PASSWORD = credentials('db-password')
-        MAIL_PASSWORD = credentials('gmail-password')
+        // SPRING_DATASOURCE_PASSWORD = credentials('db-password') // Commented out - using default value
+        // MAIL_PASSWORD = credentials('gmail-password') // Commented out - using default value
         // STRIPE_SECRET_KEY = credentials('stripe-secret-key') // Commented out - credential not configured
     }
     
