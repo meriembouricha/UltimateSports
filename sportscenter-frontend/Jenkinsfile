@@ -75,108 +75,96 @@ pipeline {
                 dir('sportscenter-frontend') {
                     script {
                         try {
-                            // Check for available browsers and set up testing environment
-                            sh '''
-                                # Initialize browser variables
-                                export CHROME_BIN=""
-                                export FIREFOX_BIN=""
-                                export BROWSER_TYPE=""
-                                
-                                # Check if Chrome is already available
-                                if command -v google-chrome &> /dev/null; then
-                                    echo "Chrome found at: $(which google-chrome)"
-                                    export CHROME_BIN=$(which google-chrome)
-                                    export BROWSER_TYPE="chrome"
-                                elif command -v chromium-browser &> /dev/null; then
-                                    echo "Chromium found at: $(which chromium-browser)"
-                                    export CHROME_BIN=$(which chromium-browser)
-                                    export BROWSER_TYPE="chrome"
-                                elif command -v chromium &> /dev/null; then
-                                    echo "Chromium found at: $(which chromium)"
-                                    export CHROME_BIN=$(which chromium)
-                                    export BROWSER_TYPE="chrome"
-                                else
-                                    echo "No Chrome/Chromium found, trying to install..."
-                                    # Try to install Chrome with sudo
-                                    if sudo apt-get update -qq && \
-                                       sudo apt-get install -y -qq wget gnupg && \
-                                       wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
-                                       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list && \
-                                       sudo apt-get update -qq && \
-                                       sudo apt-get install -y -qq google-chrome-stable; then
-                                        echo "Chrome installed successfully"
-                                        # Find the actual Chrome binary location
-                                        if [ -f "/usr/bin/google-chrome" ]; then
-                                            export CHROME_BIN="/usr/bin/google-chrome"
-                                            export BROWSER_TYPE="chrome"
-                                        elif [ -f "/usr/bin/google-chrome-stable" ]; then
-                                            export CHROME_BIN="/usr/bin/google-chrome-stable"
-                                            export BROWSER_TYPE="chrome"
-                                        else
-                                            echo "Chrome installed but binary not found, searching..."
-                                            CHROME_BIN=$(find /usr -name "google-chrome*" -type f -executable 2>/dev/null | head -1)
-                                            if [ -n "$CHROME_BIN" ]; then
-                                                export CHROME_BIN="$CHROME_BIN"
-                                                export BROWSER_TYPE="chrome"
-                                                echo "Chrome found at: $CHROME_BIN"
-                                            else
-                                                echo "Chrome installation failed or binary not found"
-                                                export CHROME_BIN=""
-                                            fi
-                                        fi
-                                    else
-                                        echo "Chrome installation failed"
-                                        export CHROME_BIN=""
-                                    fi
-                                fi
-                                
-                                # Check for Firefox if Chrome is not available
-                                if [ -z "$BROWSER_TYPE" ]; then
-                                    if command -v firefox &> /dev/null; then
-                                        echo "Firefox found at: $(which firefox)"
-                                        export FIREFOX_BIN=$(which firefox)
-                                        export BROWSER_TYPE="firefox"
-                                    elif command -v firefox-esr &> /dev/null; then
-                                        echo "Firefox ESR found at: $(which firefox-esr)"
-                                        export FIREFOX_BIN=$(which firefox-esr)
-                                        export BROWSER_TYPE="firefox"
-                                    else
-                                        echo "No Firefox found, trying to install..."
-                                        if sudo apt-get update -qq && sudo apt-get install -y -qq firefox; then
-                                            echo "Firefox installed successfully"
-                                            if [ -f "/usr/bin/firefox" ]; then
-                                                export FIREFOX_BIN="/usr/bin/firefox"
-                                                export BROWSER_TYPE="firefox"
-                                            else
-                                                echo "Firefox installed but binary not found"
-                                                export FIREFOX_BIN=""
-                                            fi
-                                        else
-                                            echo "Firefox installation failed"
-                                            export FIREFOX_BIN=""
-                                        fi
-                                    fi
-                                fi
-                                
-                                # Verify browser binary exists
-                                if [ "$BROWSER_TYPE" = "chrome" ] && [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
-                                    echo "Chrome binary verified at: $CHROME_BIN"
-                                elif [ "$BROWSER_TYPE" = "firefox" ] && [ -n "$FIREFOX_BIN" ] && [ -f "$FIREFOX_BIN" ]; then
-                                    echo "Firefox binary verified at: $FIREFOX_BIN"
-                                else
-                                    echo "No suitable browser found, will try to run tests anyway"
-                                    export BROWSER_TYPE=""
-                                fi
-                            '''
-                            
-                            // Run unit tests with resource-optimized settings for VM
+                            // Run unit tests with browser detection and execution in one script
                             timeout(time: 8, unit: 'MINUTES') {
                                 sh '''
                                     # Set Node.js memory limit to reduce resource usage
                                     export NODE_OPTIONS="--max-old-space-size=1024"
                                     
-                                    # Run tests with minimal resource consumption
+                                    # Initialize browser variables
+                                    CHROME_BIN=""
+                                    FIREFOX_BIN=""
+                                    BROWSER_TYPE=""
+                                    
+                                    # Check if Chrome is already available
+                                    if command -v google-chrome &> /dev/null; then
+                                        echo "Chrome found at: $(which google-chrome)"
+                                        CHROME_BIN=$(which google-chrome)
+                                        BROWSER_TYPE="chrome"
+                                    elif command -v chromium-browser &> /dev/null; then
+                                        echo "Chromium found at: $(which chromium-browser)"
+                                        CHROME_BIN=$(which chromium-browser)
+                                        BROWSER_TYPE="chrome"
+                                    elif command -v chromium &> /dev/null; then
+                                        echo "Chromium found at: $(which chromium)"
+                                        CHROME_BIN=$(which chromium)
+                                        BROWSER_TYPE="chrome"
+                                    else
+                                        echo "No Chrome/Chromium found, trying to install..."
+                                        # Try to install Chrome with sudo
+                                        if sudo apt-get update -qq && \
+                                           sudo apt-get install -y -qq wget gnupg && \
+                                           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
+                                           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list && \
+                                           sudo apt-get update -qq && \
+                                           sudo apt-get install -y -qq google-chrome-stable; then
+                                            echo "Chrome installed successfully"
+                                            # Find the actual Chrome binary location
+                                            if [ -f "/usr/bin/google-chrome" ]; then
+                                                CHROME_BIN="/usr/bin/google-chrome"
+                                                BROWSER_TYPE="chrome"
+                                            elif [ -f "/usr/bin/google-chrome-stable" ]; then
+                                                CHROME_BIN="/usr/bin/google-chrome-stable"
+                                                BROWSER_TYPE="chrome"
+                                            else
+                                                echo "Chrome installed but binary not found, searching..."
+                                                CHROME_BIN=$(find /usr -name "google-chrome*" -type f -executable 2>/dev/null | head -1)
+                                                if [ -n "$CHROME_BIN" ]; then
+                                                    BROWSER_TYPE="chrome"
+                                                    echo "Chrome found at: $CHROME_BIN"
+                                                else
+                                                    echo "Chrome installation failed or binary not found"
+                                                    CHROME_BIN=""
+                                                fi
+                                            fi
+                                        else
+                                            echo "Chrome installation failed"
+                                            CHROME_BIN=""
+                                        fi
+                                    fi
+                                    
+                                    # Check for Firefox if Chrome is not available
+                                    if [ -z "$BROWSER_TYPE" ]; then
+                                        if command -v firefox &> /dev/null; then
+                                            echo "Firefox found at: $(which firefox)"
+                                            FIREFOX_BIN=$(which firefox)
+                                            BROWSER_TYPE="firefox"
+                                        elif command -v firefox-esr &> /dev/null; then
+                                            echo "Firefox ESR found at: $(which firefox-esr)"
+                                            FIREFOX_BIN=$(which firefox-esr)
+                                            BROWSER_TYPE="firefox"
+                                        else
+                                            echo "No Firefox found, trying to install..."
+                                            if sudo apt-get update -qq && sudo apt-get install -y -qq firefox; then
+                                                echo "Firefox installed successfully"
+                                                if [ -f "/usr/bin/firefox" ]; then
+                                                    FIREFOX_BIN="/usr/bin/firefox"
+                                                    BROWSER_TYPE="firefox"
+                                                else
+                                                    echo "Firefox installed but binary not found"
+                                                    FIREFOX_BIN=""
+                                                fi
+                                            else
+                                                echo "Firefox installation failed"
+                                                FIREFOX_BIN=""
+                                            fi
+                                        fi
+                                    fi
+                                    
+                                    # Verify browser binary exists and run tests
                                     if [ "$BROWSER_TYPE" = "chrome" ] && [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
+                                        echo "Chrome binary verified at: $CHROME_BIN"
+                                        export CHROME_BIN="$CHROME_BIN"
                                         echo "Running tests with Chrome at: $CHROME_BIN"
                                         npm run test -- \
                                             --watch=false \
@@ -185,6 +173,8 @@ pipeline {
                                             --progress=false \
                                             --reporters=progress,coverage
                                     elif [ "$BROWSER_TYPE" = "firefox" ] && [ -n "$FIREFOX_BIN" ] && [ -f "$FIREFOX_BIN" ]; then
+                                        echo "Firefox binary verified at: $FIREFOX_BIN"
+                                        export FIREFOX_BIN="$FIREFOX_BIN"
                                         echo "Running tests with Firefox at: $FIREFOX_BIN"
                                         npm run test -- \
                                             --watch=false \
