@@ -51,18 +51,13 @@ pipeline {
                                     # Set Node.js memory limit to reduce resource usage
                                     export NODE_OPTIONS="--max-old-space-size=1024"
                                     
-                                    # Run tests with minimal resource consumption
-                                    npm run test -- \
-                                        --watch=false \
-                                        --browsers=ChromeHeadless \
-                                        --code-coverage \
-                                        --progress=false \
-                                        --reporters=progress,coverage \
-                                        --single-run=true \
-                                        --no-source-map \
-                                        --optimization=false \
-                                        --aot=false \
-                                        --build-optimizer=false
+                            # Run tests with minimal resource consumption
+                            npm run test -- \
+                                --watch=false \
+                                --browsers=ChromeHeadless \
+                                --code-coverage \
+                                --progress=false \
+                                --reporters=progress,coverage
                                 '''
                             }
                         } catch (Exception e) {
@@ -121,7 +116,7 @@ pipeline {
                             export NODE_OPTIONS="--max-old-space-size=1024"
                             
                             # Build with minimal resource consumption
-                            npm run build -- --configuration=development --source-map=false
+                            npm run build -- --configuration=development
                         '''
                     }
                 }
