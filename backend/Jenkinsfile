@@ -8,6 +8,7 @@ pipeline {
         NEXUS = credentials('nexus-creds')
         DOCKER_IMAGE = 'meriembouricha/sportscenter-backend'
         TMPDIR = "/var/trivy-tmp"
+        SPRING_DATASOURCE_PASSWORD = credentials('db-password')
     }
     
     stages {
