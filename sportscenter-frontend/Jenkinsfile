@@ -40,10 +40,90 @@ pipeline {
             }
         }
 
+        stage('Run Unit Tests') {
+            steps {
+                dir('sportscenter-frontend') {
+                    script {
+                        try {
+                            // Run unit tests with resource-optimized settings for VM
+                            timeout(time: 8, unit: 'MINUTES') {
+                                sh '''
+                                    # Set Node.js memory limit to reduce resource usage
+                                    export NODE_OPTIONS="--max-old-space-size=1024"
+                                    
+                                    # Run tests with minimal resource consumption
+                                    npm run test -- \
+                                        --watch=false \
+                                        --browsers=ChromeHeadless \
+                                        --code-coverage \
+                                        --progress=false \
+                                        --reporters=progress,coverage \
+                                        --single-run=true \
+                                        --no-source-map \
+                                        --optimization=false \
+                                        --aot=false \
+                                        --build-optimizer=false
+                                '''
+                            }
+                        } catch (Exception e) {
+                            echo "Unit tests failed: ${e.getMessage()}"
+                            currentBuild.result = 'UNSTABLE'
+                            throw e
+                        }
+                    }
+                }
+            }
+            post {
+                always {
+                    // Clean up temporary files to free up space
+                    sh '''
+                        # Clean up node_modules cache and temporary files
+                        rm -rf node_modules/.cache || true
+                        rm -rf .angular/cache || true
+                        rm -rf coverage/.nyc_output || true
+                        
+                        # Clear npm cache
+                        npm cache clean --force || true
+                    '''
+                    
+                    // Publish test results (JUnit format)
+                    publishTestResults testResultsPattern: 'sportscenter-frontend/coverage/test-results.xml'
+                    
+                    // Publish coverage reports
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'sportscenter-frontend/coverage',
+                        reportFiles: 'index.html',
+                        reportName: 'Unit Test Coverage Report'
+                    ])
+                    
+                    // Archive test artifacts
+                    archiveArtifacts artifacts: 'sportscenter-frontend/coverage/**/*', allowEmptyArchive: true
+                }
+                success {
+                    echo "Unit tests completed successfully"
+                }
+                failure {
+                    echo "Unit tests failed - check the test results"
+                }
+            }
+        }
+
         stage('Build App') {
             steps {
                 dir('sportscenter-frontend') {
-                    sh 'npm run build'
+                    script {
+                        // Build with resource-optimized settings for VM
+                        sh '''
+                            # Set Node.js memory limit for build process
+                            export NODE_OPTIONS="--max-old-space-size=1024"
+                            
+                            # Build with minimal resource consumption
+                            npm run build -- --configuration=development --source-map=false
+                        '''
+                    }
                 }
             }
         }
@@ -60,6 +140,26 @@ pipeline {
                             -Dsonar.host.url=http://139.59.150.186:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
                         """
+                    }
+                }
+            }
+        }
+
+        stage('Publish Test Reports to Nexus') {
+            steps {
+                dir('sportscenter-frontend') {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USR', passwordVariable: 'NEXUS_PSW')]) {
+                        script {
+                            // Create test reports archive
+                            sh "cd coverage && tar -czf test-reports-${BUILD_NUMBER}.tar.gz ."
+                            
+                            // Upload test reports to Nexus
+                            sh """
+                                curl -v -u $NEXUS_USR:$NEXUS_PSW \
+                                  --upload-file coverage/test-reports-${BUILD_NUMBER}.tar.gz \
+                                  http://139.59.150.186:8081/repository/nexus-reports/frontend-test-reports-${BUILD_NUMBER}.tar.gz
+                            """
+                        }
                     }
                 }
             }
@@ -119,6 +219,22 @@ pipeline {
             // Clean up Docker images to save space
             sh "docker rmi ${IMAGE_NAME} || true"
             sh "docker rmi ${DOCKER_IMAGE} || true"
+            
+            // Clean up workspace to free up disk space
+            sh '''
+                # Clean up frontend build artifacts
+                rm -rf sportscenter-frontend/dist || true
+                rm -rf sportscenter-frontend/node_modules/.cache || true
+                rm -rf sportscenter-frontend/.angular/cache || true
+                rm -rf sportscenter-frontend/coverage/.nyc_output || true
+                
+                # Clean up npm cache
+                cd sportscenter-frontend && npm cache clean --force || true
+                
+                # Clean up any temporary files
+                find . -name "*.tmp" -delete || true
+                find . -name "*.log" -delete || true
+            '''
         }
     }
 }
