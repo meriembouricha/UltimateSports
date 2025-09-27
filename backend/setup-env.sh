@@ -8,9 +8,9 @@ echo "Setting up local development environment..."
 # Create .env file
 cat > .env << EOF
 # Database Configuration
-SPRING_DATASOURCE_URL=jdbc:mysql://sportscenterdb-do-user-24951870-0.g.db.ondigitalocean.com:25060/sportscenter?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
-SPRING_DATASOURCE_USERNAME=doadmin
-SPRING_DATASOURCE_PASSWORD=your_database_password_here
+SPRING_DATASOURCE_URL=jdbc:mysql://159.89.6.184:3306/sportscenter?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+SPRING_DATASOURCE_USERNAME=sportscenteruser
+SPRING_DATASOURCE_PASSWORD=YourStrongPassword123!
 
 # Redis Configuration
 SPRING_REDIS_HOST=139.59.150.186

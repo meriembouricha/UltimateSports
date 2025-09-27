@@ -4,11 +4,11 @@ This document describes the required environment variables for the UltimateSport
 
 ## Database Configuration
 
-The application uses a DigitalOcean MySQL database. The following environment variables must be set:
+The application uses a MySQL database. The following environment variables must be set:
 
-- `SPRING_DATASOURCE_URL`: Database connection URL (default: jdbc:mysql://sportscenterdb-do-user-24951870-0.g.db.ondigitalocean.com:25060/sportscenter?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true)
-- `SPRING_DATASOURCE_USERNAME`: Database username (default: doadmin)
-- `SPRING_DATASOURCE_PASSWORD`: Database password (REQUIRED - no default value)
+- `SPRING_DATASOURCE_URL`: Database connection URL (default: jdbc:mysql://159.89.6.184:3306/sportscenter?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true)
+- `SPRING_DATASOURCE_USERNAME`: Database username (default: sportscenteruser)
+- `SPRING_DATASOURCE_PASSWORD`: Database password (default: YourStrongPassword123!)
 
 ## Redis Configuration
 

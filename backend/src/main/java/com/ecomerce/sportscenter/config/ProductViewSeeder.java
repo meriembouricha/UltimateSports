@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
-@Component  // uncomment to enable auto-run at startup
+//@Component  // uncomment to enable auto-run at startup
 @RequiredArgsConstructor
 public class ProductViewSeeder implements CommandLineRunner {
 

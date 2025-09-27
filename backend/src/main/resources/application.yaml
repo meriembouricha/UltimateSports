@@ -6,9 +6,9 @@ spring:
     name: SportsCenter
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://sportscenterdb-do-user-24951870-0.g.db.ondigitalocean.com:25060/sportscenter?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: ${SPRING_DATASOURCE_USERNAME:doadmin}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://159.89.6.184:3306/sportscenter?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:sportscenteruser}
+    password: ${SPRING_DATASOURCE_PASSWORD:YourStrongPassword123!}
 
   jpa:
     hibernate:

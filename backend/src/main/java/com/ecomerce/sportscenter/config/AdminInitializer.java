@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-@Component
+//@Component
 public class AdminInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
