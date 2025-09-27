@@ -90,13 +90,41 @@ pipeline {
                                 else
                                     echo "No Chrome/Chromium found, trying to install..."
                                     # Try to install Chrome with sudo
-                                    sudo apt-get update -qq && \
-                                    sudo apt-get install -y -qq wget gnupg && \
-                                    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
-                                    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list && \
-                                    sudo apt-get update -qq && \
-                                    sudo apt-get install -y -qq google-chrome-stable && \
-                                    export CHROME_BIN=/usr/bin/google-chrome
+                                    if sudo apt-get update -qq && \
+                                       sudo apt-get install -y -qq wget gnupg && \
+                                       wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
+                                       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list && \
+                                       sudo apt-get update -qq && \
+                                       sudo apt-get install -y -qq google-chrome-stable; then
+                                        echo "Chrome installed successfully"
+                                        # Find the actual Chrome binary location
+                                        if [ -f "/usr/bin/google-chrome" ]; then
+                                            export CHROME_BIN="/usr/bin/google-chrome"
+                                        elif [ -f "/usr/bin/google-chrome-stable" ]; then
+                                            export CHROME_BIN="/usr/bin/google-chrome-stable"
+                                        else
+                                            echo "Chrome installed but binary not found, searching..."
+                                            CHROME_BIN=$(find /usr -name "google-chrome*" -type f -executable 2>/dev/null | head -1)
+                                            if [ -n "$CHROME_BIN" ]; then
+                                                export CHROME_BIN="$CHROME_BIN"
+                                                echo "Chrome found at: $CHROME_BIN"
+                                            else
+                                                echo "Chrome installation failed or binary not found"
+                                                export CHROME_BIN=""
+                                            fi
+                                        fi
+                                    else
+                                        echo "Chrome installation failed"
+                                        export CHROME_BIN=""
+                                    fi
+                                fi
+                                
+                                # Verify Chrome binary exists
+                                if [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
+                                    echo "Chrome binary verified at: $CHROME_BIN"
+                                else
+                                    echo "Chrome binary not found, will try Firefox"
+                                    export CHROME_BIN=""
                                 fi
                             '''
                             
@@ -105,12 +133,11 @@ pipeline {
                                 sh '''
                                     # Set Node.js memory limit to reduce resource usage
                                     export NODE_OPTIONS="--max-old-space-size=1024"
-                                    export CHROME_BIN=/usr/bin/google-chrome
                                     
                                     # Run tests with minimal resource consumption
                                     # Try Chrome first, fallback to Firefox
-                                    if [ -n "$CHROME_BIN" ]; then
-                                        echo "Running tests with Chrome"
+                                    if [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
+                                        echo "Running tests with Chrome at: $CHROME_BIN"
                                         npm run test -- \
                                             --watch=false \
                                             --browsers=ChromeHeadless \
@@ -118,7 +145,7 @@ pipeline {
                                             --progress=false \
                                             --reporters=progress,coverage
                                     else
-                                        echo "Running tests with Firefox"
+                                        echo "Running tests with Firefox (Chrome not available)"
                                         npm run test -- \
                                             --watch=false \
                                             --browsers=FirefoxHeadless \
