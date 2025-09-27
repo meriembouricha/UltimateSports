@@ -86,18 +86,23 @@ pipeline {
                                     FIREFOX_BIN=""
                                     BROWSER_TYPE=""
                                     
+                                    echo "Starting browser detection..."
+                                    
                                     # Check if Chrome is already available
                                     if command -v google-chrome &> /dev/null; then
-                                        echo "Chrome found at: $(which google-chrome)"
-                                        CHROME_BIN=$(which google-chrome)
+                                        CHROME_PATH=$(which google-chrome)
+                                        echo "Chrome found at: $CHROME_PATH"
+                                        CHROME_BIN="$CHROME_PATH"
                                         BROWSER_TYPE="chrome"
                                     elif command -v chromium-browser &> /dev/null; then
-                                        echo "Chromium found at: $(which chromium-browser)"
-                                        CHROME_BIN=$(which chromium-browser)
+                                        CHROME_PATH=$(which chromium-browser)
+                                        echo "Chromium found at: $CHROME_PATH"
+                                        CHROME_BIN="$CHROME_PATH"
                                         BROWSER_TYPE="chrome"
                                     elif command -v chromium &> /dev/null; then
-                                        echo "Chromium found at: $(which chromium)"
-                                        CHROME_BIN=$(which chromium)
+                                        CHROME_PATH=$(which chromium)
+                                        echo "Chromium found at: $CHROME_PATH"
+                                        CHROME_BIN="$CHROME_PATH"
                                         BROWSER_TYPE="chrome"
                                     else
                                         echo "No Chrome/Chromium found, trying to install..."
@@ -136,12 +141,14 @@ pipeline {
                                     # Check for Firefox if Chrome is not available
                                     if [ -z "$BROWSER_TYPE" ]; then
                                         if command -v firefox &> /dev/null; then
-                                            echo "Firefox found at: $(which firefox)"
-                                            FIREFOX_BIN=$(which firefox)
+                                            FIREFOX_PATH=$(which firefox)
+                                            echo "Firefox found at: $FIREFOX_PATH"
+                                            FIREFOX_BIN="$FIREFOX_PATH"
                                             BROWSER_TYPE="firefox"
                                         elif command -v firefox-esr &> /dev/null; then
-                                            echo "Firefox ESR found at: $(which firefox-esr)"
-                                            FIREFOX_BIN=$(which firefox-esr)
+                                            FIREFOX_PATH=$(which firefox-esr)
+                                            echo "Firefox ESR found at: $FIREFOX_PATH"
+                                            FIREFOX_BIN="$FIREFOX_PATH"
                                             BROWSER_TYPE="firefox"
                                         else
                                             echo "No Firefox found, trying to install..."
@@ -160,6 +167,12 @@ pipeline {
                                             fi
                                         fi
                                     fi
+                                    
+                                    # Debug output
+                                    echo "Browser detection complete:"
+                                    echo "  BROWSER_TYPE: $BROWSER_TYPE"
+                                    echo "  CHROME_BIN: $CHROME_BIN"
+                                    echo "  FIREFOX_BIN: $FIREFOX_BIN"
                                     
                                     # Verify browser binary exists and run tests
                                     if [ "$BROWSER_TYPE" = "chrome" ] && [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
