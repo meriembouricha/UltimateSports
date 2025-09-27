@@ -34,8 +34,38 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 dir('sportscenter-frontend') {
-                    sh 'npm install'
-                    sh 'npm install sonar-scanner --save-dev'
+                    script {
+                        // Install dependencies with memory optimization and timeout
+                        timeout(time: 10, unit: 'MINUTES') {
+                            sh '''
+                                # Set Node.js memory limit for npm install
+                                export NODE_OPTIONS="--max-old-space-size=1024"
+                                
+                                # Monitor memory usage
+                                echo "Available memory before npm install:"
+                                free -h
+                                
+                                # Clean up any existing node_modules to free space
+                                rm -rf node_modules || true
+                                rm -rf .angular/cache || true
+                                
+                                # Clean npm cache first
+                                npm cache clean --force || true
+                                
+                                # Install dependencies with reduced memory usage
+                                echo "Installing dependencies..."
+                                npm install --no-audit --no-fund --prefer-offline --progress=false
+                                
+                                # Install sonar-scanner separately
+                                echo "Installing sonar-scanner..."
+                                npm install sonar-scanner --save-dev --no-audit --no-fund --progress=false
+                                
+                                # Check memory usage after install
+                                echo "Available memory after npm install:"
+                                free -h
+                            '''
+                        }
+                    }
                 }
             }
         }
