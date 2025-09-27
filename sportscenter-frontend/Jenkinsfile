@@ -35,36 +35,36 @@ pipeline {
             steps {
                 dir('sportscenter-frontend') {
                     script {
-                        // Install dependencies with memory optimization and timeout
-                        timeout(time: 10, unit: 'MINUTES') {
-                            sh '''
-                                # Set Node.js memory limit for npm install
-                                export NODE_OPTIONS="--max-old-space-size=1024"
-                                
-                                # Monitor memory usage
-                                echo "Available memory before npm install:"
-                                free -h
-                                
-                                # Clean up any existing node_modules to free space
-                                rm -rf node_modules || true
-                                rm -rf .angular/cache || true
-                                
-                                # Clean npm cache first
-                                npm cache clean --force || true
-                                
-                                # Install dependencies with reduced memory usage
-                                echo "Installing dependencies..."
-                                npm install --no-audit --no-fund --prefer-offline --progress=false
-                                
-                                # Install sonar-scanner separately
-                                echo "Installing sonar-scanner..."
-                                npm install sonar-scanner --save-dev --no-audit --no-fund --progress=false
-                                
-                                # Check memory usage after install
-                                echo "Available memory after npm install:"
-                                free -h
-                            '''
-                        }
+                            // Install dependencies with memory optimization and timeout
+                            timeout(time: 10, unit: 'MINUTES') {
+                                sh '''
+                                    # Set Node.js memory limit for npm install
+                                    export NODE_OPTIONS="--max-old-space-size=1024"
+                                    
+                                    # Monitor memory usage
+                                    echo "Available memory before npm install:"
+                                    free -h
+                                    
+                                    # Clean up any existing node_modules to free space
+                                    rm -rf node_modules || true
+                                    rm -rf .angular/cache || true
+                                    
+                                    # Clean npm cache first
+                                    npm cache clean --force || true
+                                    
+                                    # Install dependencies with reduced memory usage
+                                    echo "Installing dependencies..."
+                                    npm install --no-audit --no-fund --prefer-offline --progress=false
+                                    
+                                    # Install sonar-scanner and browser launchers
+                                    echo "Installing additional packages..."
+                                    npm install sonar-scanner karma-firefox-launcher --save-dev --no-audit --no-fund --progress=false
+                                    
+                                    # Check memory usage after install
+                                    echo "Available memory after npm install:"
+                                    free -h
+                                '''
+                            }
                     }
                 }
             }
@@ -75,18 +75,26 @@ pipeline {
                 dir('sportscenter-frontend') {
                     script {
                         try {
-                            // Check for available browsers and set up Chrome
+                            // Check for available browsers and set up testing environment
                             sh '''
+                                # Initialize browser variables
+                                export CHROME_BIN=""
+                                export FIREFOX_BIN=""
+                                export BROWSER_TYPE=""
+                                
                                 # Check if Chrome is already available
                                 if command -v google-chrome &> /dev/null; then
                                     echo "Chrome found at: $(which google-chrome)"
                                     export CHROME_BIN=$(which google-chrome)
+                                    export BROWSER_TYPE="chrome"
                                 elif command -v chromium-browser &> /dev/null; then
                                     echo "Chromium found at: $(which chromium-browser)"
                                     export CHROME_BIN=$(which chromium-browser)
+                                    export BROWSER_TYPE="chrome"
                                 elif command -v chromium &> /dev/null; then
                                     echo "Chromium found at: $(which chromium)"
                                     export CHROME_BIN=$(which chromium)
+                                    export BROWSER_TYPE="chrome"
                                 else
                                     echo "No Chrome/Chromium found, trying to install..."
                                     # Try to install Chrome with sudo
@@ -100,13 +108,16 @@ pipeline {
                                         # Find the actual Chrome binary location
                                         if [ -f "/usr/bin/google-chrome" ]; then
                                             export CHROME_BIN="/usr/bin/google-chrome"
+                                            export BROWSER_TYPE="chrome"
                                         elif [ -f "/usr/bin/google-chrome-stable" ]; then
                                             export CHROME_BIN="/usr/bin/google-chrome-stable"
+                                            export BROWSER_TYPE="chrome"
                                         else
                                             echo "Chrome installed but binary not found, searching..."
                                             CHROME_BIN=$(find /usr -name "google-chrome*" -type f -executable 2>/dev/null | head -1)
                                             if [ -n "$CHROME_BIN" ]; then
                                                 export CHROME_BIN="$CHROME_BIN"
+                                                export BROWSER_TYPE="chrome"
                                                 echo "Chrome found at: $CHROME_BIN"
                                             else
                                                 echo "Chrome installation failed or binary not found"
@@ -119,12 +130,42 @@ pipeline {
                                     fi
                                 fi
                                 
-                                # Verify Chrome binary exists
-                                if [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
+                                # Check for Firefox if Chrome is not available
+                                if [ -z "$BROWSER_TYPE" ]; then
+                                    if command -v firefox &> /dev/null; then
+                                        echo "Firefox found at: $(which firefox)"
+                                        export FIREFOX_BIN=$(which firefox)
+                                        export BROWSER_TYPE="firefox"
+                                    elif command -v firefox-esr &> /dev/null; then
+                                        echo "Firefox ESR found at: $(which firefox-esr)"
+                                        export FIREFOX_BIN=$(which firefox-esr)
+                                        export BROWSER_TYPE="firefox"
+                                    else
+                                        echo "No Firefox found, trying to install..."
+                                        if sudo apt-get update -qq && sudo apt-get install -y -qq firefox; then
+                                            echo "Firefox installed successfully"
+                                            if [ -f "/usr/bin/firefox" ]; then
+                                                export FIREFOX_BIN="/usr/bin/firefox"
+                                                export BROWSER_TYPE="firefox"
+                                            else
+                                                echo "Firefox installed but binary not found"
+                                                export FIREFOX_BIN=""
+                                            fi
+                                        else
+                                            echo "Firefox installation failed"
+                                            export FIREFOX_BIN=""
+                                        fi
+                                    fi
+                                fi
+                                
+                                # Verify browser binary exists
+                                if [ "$BROWSER_TYPE" = "chrome" ] && [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
                                     echo "Chrome binary verified at: $CHROME_BIN"
+                                elif [ "$BROWSER_TYPE" = "firefox" ] && [ -n "$FIREFOX_BIN" ] && [ -f "$FIREFOX_BIN" ]; then
+                                    echo "Firefox binary verified at: $FIREFOX_BIN"
                                 else
-                                    echo "Chrome binary not found, will try Firefox"
-                                    export CHROME_BIN=""
+                                    echo "No suitable browser found, will try to run tests anyway"
+                                    export BROWSER_TYPE=""
                                 fi
                             '''
                             
@@ -135,8 +176,7 @@ pipeline {
                                     export NODE_OPTIONS="--max-old-space-size=1024"
                                     
                                     # Run tests with minimal resource consumption
-                                    # Try Chrome first, fallback to Firefox
-                                    if [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
+                                    if [ "$BROWSER_TYPE" = "chrome" ] && [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
                                         echo "Running tests with Chrome at: $CHROME_BIN"
                                         npm run test -- \
                                             --watch=false \
@@ -144,11 +184,18 @@ pipeline {
                                             --code-coverage \
                                             --progress=false \
                                             --reporters=progress,coverage
-                                    else
-                                        echo "Running tests with Firefox (Chrome not available)"
+                                    elif [ "$BROWSER_TYPE" = "firefox" ] && [ -n "$FIREFOX_BIN" ] && [ -f "$FIREFOX_BIN" ]; then
+                                        echo "Running tests with Firefox at: $FIREFOX_BIN"
                                         npm run test -- \
                                             --watch=false \
                                             --browsers=FirefoxHeadless \
+                                            --code-coverage \
+                                            --progress=false \
+                                            --reporters=progress,coverage
+                                    else
+                                        echo "No suitable browser found, trying to run tests with default configuration"
+                                        npm run test -- \
+                                            --watch=false \
                                             --code-coverage \
                                             --progress=false \
                                             --reporters=progress,coverage
