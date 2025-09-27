@@ -36,7 +36,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    browsers: ['ChromeHeadless', 'FirefoxHeadless', 'PhantomJS'],
+    browsers: ['ChromeHeadless', 'FirefoxHeadless'],
     singleRun: true,
     restartOnFileChange: false,
     // Optimize for CI environment
