@@ -97,7 +97,7 @@ pipeline {
                 dir('backend') {
                     withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USR', passwordVariable: 'NEXUS_PSW')]) {
                         // Test connection first
-                        sh "curl -u $NEXUS_USR:$NEXUS_PSW http://139.59.150.186:8081/service/rest/v1/status"
+                        sh "curl -u $NEXUS_USR:$NEXUS_PSW http://167.71.45.125:8081/service/rest/v1/status"
                         
                         // Deploy to Nexus
                         sh "mvn deploy -s jenkins-settings.xml"
@@ -118,14 +118,14 @@ pipeline {
                             sh """
                             curl -v -u $NEXUS_USR:$NEXUS_PSW \
                               --upload-file target/site/jacoco-reports-${BUILD_NUMBER}.tar.gz \
-                              http://139.59.150.186:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
+                              http://167.71.45.125:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
                             """
                             
                             // Also upload individual HTML report
                             sh """
                             curl -v -u $NEXUS_USR:$NEXUS_PSW \
                               --upload-file target/site/jacoco/index.html \
-                              http://139.59.150.186:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
+                              http://167.71.45.125:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
                             """
                         }
                     }

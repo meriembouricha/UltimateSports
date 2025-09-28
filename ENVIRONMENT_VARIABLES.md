@@ -12,7 +12,7 @@ The application uses a MySQL database. The following environment variables must 
 
 ## Redis Configuration
 
-- `SPRING_REDIS_HOST`: Redis host (default: 139.59.150.186)
+- `SPRING_REDIS_HOST`: Redis host (default: 167.71.45.125)
 - `SPRING_REDIS_PORT`: Redis port (default: 6379)
 - `REDIS_PASSWORD`: Redis password (default: empty)
 

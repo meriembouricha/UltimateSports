@@ -241,7 +241,7 @@ pipeline {
                             npx sonar-scanner \
                             -Dsonar.projectKey=sportscenter-frontend \
                         -Dsonar.sources=src \
-                            -Dsonar.host.url=http://139.59.150.186:9000 \
+                            -Dsonar.host.url=http://167.71.45.125:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
                         """
                     }
@@ -286,7 +286,7 @@ pipeline {
                             sh """
                                 curl -v -u $NEXUS_USR:$NEXUS_PSW \
                                   --upload-file coverage/test-reports-${BUILD_NUMBER}.tar.gz \
-                                  http://139.59.150.186:8081/repository/nexus-reports/frontend-test-reports-${BUILD_NUMBER}.tar.gz
+                                  http://167.71.45.125:8081/repository/nexus-reports/frontend-test-reports-${BUILD_NUMBER}.tar.gz
                             """
                         }
                     }
