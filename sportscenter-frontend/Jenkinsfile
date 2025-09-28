@@ -17,7 +17,7 @@ pipeline {
                 script {
                     // Clean workspace
                     cleanWs()
-                    
+
                     // Checkout from GitHub
                     checkout([
                         $class: 'GitSCM',
@@ -54,26 +54,26 @@ pipeline {
                                 sh '''
                                     # Set Node.js memory limit for npm install
                                     export NODE_OPTIONS="--max-old-space-size=1024"
-                                    
+
                                     # Monitor memory usage
                                     echo "Available memory before npm install:"
                                     free -h
-                                    
+
                                     # Clean up any existing node_modules to free space
                                     rm -rf node_modules || true
                                     rm -rf .angular/cache || true
-                                    
+
                                     # Clean npm cache first
                                     npm cache clean --force || true
-                                    
+
                                     # Install dependencies with reduced memory usage
                                     echo "Installing dependencies..."
                                     npm install --no-audit --no-fund --prefer-offline --progress=false
-                                    
+
                                     # Install sonar-scanner and browser launchers
                                     echo "Installing additional packages..."
                                     npm install sonar-scanner karma-firefox-launcher --save-dev --no-audit --no-fund --progress=false
-                                    
+
                                     # Check memory usage after install
                                     echo "Available memory after npm install:"
                                     free -h
@@ -94,14 +94,14 @@ pipeline {
                                 sh '''
                                     # Set Node.js memory limit to reduce resource usage
                                     export NODE_OPTIONS="--max-old-space-size=1024"
-                                    
+
                                     # Initialize browser variables
                                     CHROME_BIN=""
                                     FIREFOX_BIN=""
                                     BROWSER_TYPE=""
-                                    
+
                                     echo "Starting browser detection..."
-                                    
+
                                     # Check if Chrome is already available
                                     if command -v google-chrome >/dev/null 2>&1; then
                                         CHROME_PATH=$(which google-chrome)
@@ -122,7 +122,7 @@ pipeline {
                                         echo "No Chrome/Chromium found, skipping installation (requires sudo password)"
                                         CHROME_BIN=""
                                     fi
-                                    
+
                                     # Check for Firefox if Chrome is not available
                                     if [ -z "$BROWSER_TYPE" ]; then
                                         if command -v firefox >/dev/null 2>&1; then
@@ -140,13 +140,13 @@ pipeline {
                                             FIREFOX_BIN=""
                                         fi
                                     fi
-                                    
+
                                     # Debug output
                                     echo "Browser detection complete:"
                                     echo "  BROWSER_TYPE: $BROWSER_TYPE"
                                     echo "  CHROME_BIN: $CHROME_BIN"
                                     echo "  FIREFOX_BIN: $FIREFOX_BIN"
-                                    
+
                                     # Verify browser binary exists and run tests
                                     if [ "$BROWSER_TYPE" = "chrome" ] && [ -n "$CHROME_BIN" ] && [ -f "$CHROME_BIN" ]; then
                                         echo "Chrome binary verified at: $CHROME_BIN"
@@ -202,11 +202,11 @@ pipeline {
                         rm -rf node_modules/.cache || true
                         rm -rf .angular/cache || true
                         rm -rf coverage/.nyc_output || true
-                        
+
                         # Clear npm cache
                         npm cache clean --force || true
                     '''
-                    
+
                     // Publish coverage reports
                     publishHTML([
                         allowMissing: true,
@@ -216,7 +216,7 @@ pipeline {
                         reportFiles: 'index.html',
                         reportName: 'Unit Test Coverage Report'
                     ])
-                    
+
                     // Archive test artifacts
                     archiveArtifacts artifacts: 'sportscenter-frontend/coverage/**/*', allowEmptyArchive: true
                 }
@@ -237,7 +237,7 @@ pipeline {
                         sh '''
                             # Set Node.js memory limit for build process
                             export NODE_OPTIONS="--max-old-space-size=1024"
-                            
+
                             # Build with production configuration for deployment
                             npm run build -- --configuration=production
 
@@ -283,7 +283,7 @@ pipeline {
                             sh """
                                 # Wait a moment for any file operations to complete
                                 sleep 2
-                                
+
                                 # Create test reports archive
                                 if [ -d "coverage" ] && [ "\$(ls -A coverage 2>/dev/null)" ]; then
                                     echo "Creating test reports archive..."
@@ -306,7 +306,7 @@ pipeline {
                                     cd ..
                                 fi
                             """
-                            
+
                             // Upload test reports to Nexus
                             sh """
                                 curl -v -u $NEXUS_USR:$NEXUS_PSW \
@@ -322,7 +322,23 @@ pipeline {
         stage('Trivy File System Scan') {
             steps {
                 dir('sportscenter-frontend') {
-                    sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
+                    script {
+                        try {
+                            // Clean up any stale Trivy cache/lock files
+                            sh '''
+                                # Remove any existing Trivy cache to avoid lock conflicts
+                                rm -rf ~/.cache/trivy || true
+                                rm -rf /tmp/trivy* || true
+                                
+                                # Run Trivy with timeout and retry logic
+                                timeout 300 trivy fs --exit-code 0 --severity HIGH,CRITICAL --timeout 5m .
+                            '''
+                        } catch (Exception e) {
+                            echo "Trivy filesystem scan failed: ${e.getMessage()}"
+                            echo "Continuing pipeline despite Trivy scan failure"
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                    }
                 }
             }
         }
@@ -344,7 +360,23 @@ pipeline {
 
         stage('Trivy Docker Image Scan') {
             steps {
-                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL ${DOCKER_IMAGE}"
+                script {
+                    try {
+                        // Clean up any stale Trivy cache/lock files before Docker scan
+                        sh '''
+                            # Remove any existing Trivy cache to avoid lock conflicts
+                            rm -rf ~/.cache/trivy || true
+                            rm -rf /tmp/trivy* || true
+                            
+                            # Run Trivy Docker scan with timeout
+                            timeout 300 trivy image --exit-code 0 --severity HIGH,CRITICAL --timeout 5m ${DOCKER_IMAGE}:${IMAGE_TAG}
+                        '''
+                    } catch (Exception e) {
+                        echo "Trivy Docker image scan failed: ${e.getMessage()}"
+                        echo "Continuing pipeline despite Trivy scan failure"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
             }
         }
 
@@ -355,7 +387,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USR', passwordVariable: 'DOCKERHUB_PSW')]) {
                         sh "echo $DOCKERHUB_PSW | docker login --username $DOCKERHUB_USR --password-stdin"
                     }
-                    
+
                     // Push both tags
                     sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
                     sh "docker push ${DOCKER_IMAGE}:latest"
@@ -371,19 +403,19 @@ pipeline {
                             sh '''
                                 # Set KUBECONFIG environment variable
                                 export KUBECONFIG=$KUBECONFIG
-                                
+
                                 # Verify kubectl connection
                                 kubectl cluster-info
-                                
+
                                 # Apply frontend deployment
                                 echo "Deploying frontend to Kubernetes..."
-                                kubectl apply -f k8s/frontend-deployment.yaml
+                                kubectl apply -f ./k8s/frontend-deployment.yaml
                                 # Update image with versioned tag to force new rollout
                                 kubectl set image deployment/frontend-deployment frontend=${DOCKER_IMAGE}:${IMAGE_TAG} --record
-                                
+
                                 # Apply frontend service (idempotent)
                                 kubectl apply -f k8s/frontend-service.yaml
-                                
+
                                 # Wait for deployment to be ready
                                 kubectl rollout status deployment/frontend-deployment --timeout=300s || {
                                   echo "Deployment rollout failed" >&2
@@ -391,15 +423,15 @@ pipeline {
                                   kubectl get pods -l app=frontend -o wide
                                   exit 1
                                 }
-                                
+
                                 # Get service information
                                 echo "Frontend service status:"
                                 kubectl get services frontend-service
-                                
+
                                 # Get deployment status
                                 echo "Frontend deployment status:"
                                 kubectl get deployments frontend-deployment
-                                
+
                                 # Get pods status
                                 echo "Frontend pods status:"
                                 kubectl get pods -l app=frontend
@@ -417,7 +449,7 @@ pipeline {
                         // Clean up Docker images to save space
                         sh "docker rmi ${IMAGE_NAME} || true"
                         sh "docker rmi ${DOCKER_IMAGE} || true"
-                        
+
                         // Clean up workspace to free up disk space
                         sh '''
                             # Clean up frontend build artifacts
@@ -425,10 +457,10 @@ pipeline {
                             rm -rf sportscenter-frontend/node_modules/.cache || true
                             rm -rf sportscenter-frontend/.angular/cache || true
                             rm -rf sportscenter-frontend/coverage/.nyc_output || true
-                            
+
                             # Clean up npm cache
                             cd sportscenter-frontend && npm cache clean --force || true
-                            
+
                             # Clean up any temporary files
                             find . -name "*.tmp" -delete || true
                             find . -name "*.log" -delete || true
