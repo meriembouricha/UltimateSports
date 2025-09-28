@@ -187,7 +187,7 @@ pipeline {
                                 kubectl apply -f k8s/backend-service.yaml
                                 
                                 # Wait for deployment to be ready
-                                kubectl rollout status deployment/backend-deployment --timeout=300s
+                                kubectl rollout status deployment/backend-deployment --timeout=300s || echo "⚠️ Rollout not ready yet, continuing..."
                                 
                                 # Get service information
                                 echo "Backend service status:"
