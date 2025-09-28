@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ProductData } from '../shared/models/productData';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../shared/models/product';
+import { environment } from 'src/environments/environment';
 
 export interface ProductViewRequest {
   user: { id: number};
@@ -17,8 +18,8 @@ export class StoreService {
 
   constructor(private http: HttpClient) { }
   
-  public apiUrl = 'http://localhost:8080/api/products';
-  public viewUrl = 'http://localhost:8080/api/product-views';
+  public apiUrl = `${environment.apiUrl}/api/products`;
+  public viewUrl = `${environment.apiUrl}/api/product-views`;
 
   getProducts(brandId?: number, typeId?: number, url?: string): Observable<ProductData> {
     const apiUrl = url || this.apiUrl;
@@ -44,7 +45,7 @@ export class StoreService {
   }
 
  getRecommendedProducts(userId: number): Observable<Product[]> {
-  const url = `http://localhost:8080/api/recommendations/${userId}`; // <-- port correct
+  const url = `${environment.apiUrl}/api/recommendations/${userId}`;
   return this.http.get<Product[]>(url);
 }
 

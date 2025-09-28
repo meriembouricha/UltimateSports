@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Response } from 'src/app/shared/models/response'; // Assurez-vous que le chemin vers Response est correct
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ResponseService {
-  private baseUrl = 'http://localhost:8080'; // Base URL de votre API
+  private baseUrl = environment.apiUrl; // Base URL de votre API
 
   constructor(private http: HttpClient) { }
   

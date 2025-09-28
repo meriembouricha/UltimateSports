@@ -4,12 +4,13 @@ import { Basket, BasketItem, BasketTotals } from '../shared/models/basket';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Product } from '../shared/models/product';
 import { Variant } from '../shared/models/product';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BasketService {
-  apiUrl = 'http://localhost:8080/api/baskets';
+  apiUrl = `${environment.apiUrl}/api/baskets`;
   private basketSource = new BehaviorSubject<Basket | null>(null);
   basketSource$ = this.basketSource.asObservable();
   private basketTotalSource = new BehaviorSubject<BasketTotals>({

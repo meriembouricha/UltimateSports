@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MonthlySalesDTO, DailySalesDTO } from './shared/models/analytics';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
-  private baseUrl = 'http://localhost:8080/api/analytics';
+  private baseUrl = `${environment.apiUrl}/api/analytics`;
 
   constructor(private http: HttpClient) {}
 

@@ -4,12 +4,13 @@ import { Observable, forkJoin } from 'rxjs';
 import { Complaint } from 'src/app/shared/models/complaint';
 import { ComplaintResponse } from 'src/app/shared/models/complaintResponse';
 import { switchMap, map } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComplaintService {
-  private baseUrl = 'http://localhost:8080'; // URL de base de l'API
+  private baseUrl = environment.apiUrl; // URL de base de l'API
 
   constructor(private http: HttpClient) { }
 

@@ -6,12 +6,13 @@ import { Router } from '@angular/router';
 import { User } from '../shared/models/user';
 import { jwtDecode } from 'jwt-decode';
 import { JwtPayload } from '../shared/models/JwtPayload';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSource = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
   redirectUrl: string | null = null;
@@ -153,12 +154,12 @@ export class AccountService {
 
   checkUsernameExists(username: string): Observable<boolean> {
     return this.http
-      .get<{ exists: boolean }>(`http://localhost:8080/api/users/check-username?username=${username}`)
+      .get<{ exists: boolean }>(`${environment.apiUrl}/api/users/check-username?username=${username}`)
       .pipe(map(res => res.exists));
   }
 
   changePassword(payload: { username: string, oldPassword: string, newPassword: string }): Observable<any> {
-  return this.http.post('http://localhost:8080/auth/profile/change-password', payload);
+  return this.http.post(`${environment.apiUrl}/auth/profile/change-password`, payload);
 }
 
 }

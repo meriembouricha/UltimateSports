@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Feedback } from 'src/app/shared/models/feedback';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeedbackService {
-  private apiUrl = 'http://localhost:8080/api/feedbacks';
+  private apiUrl = `${environment.apiUrl}/api/feedbacks`;
 
   constructor(private http: HttpClient) {}
 
