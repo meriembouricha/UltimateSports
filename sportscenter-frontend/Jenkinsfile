@@ -5,14 +5,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonar-token')
         DOCKERHUB = credentials('dockerhub-cred')
         NEXUS = credentials('nexus-creds')
-        IMAGE_NAME = "sportscenter-                        # Build with resource-optimized settings for VM
-                        sh '''
-                            # Set Node.js memory limit for build process
-                            export NODE_OPTIONS="--max-old-space-size=1024"
-                            
-                            # Build with production configuration for deployment
-                            npm run build -- --configuration=production
-                        '''"
+        IMAGE_NAME = "sportscenter-frontend"
         VERSION = "latest"
         DOCKER_IMAGE = 'meriembouricha/sportscenter-frontend'
         TMPDIR = "/var/trivy-tmp"
