@@ -167,6 +167,46 @@ pipeline {
             }
         }
 
+        stage('Deploy to Kubernetes') {
+            steps {
+                dir('backend') {
+                    script {
+                        withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+                            sh '''
+                                # Set KUBECONFIG environment variable
+                                export KUBECONFIG=$KUBECONFIG
+                                
+                                # Verify kubectl connection
+                                kubectl cluster-info
+                                
+                                # Apply backend deployment
+                                echo "Deploying backend to Kubernetes..."
+                                kubectl apply -f k8s/backend-deployment.yaml
+                                
+                                # Apply backend service
+                                kubectl apply -f k8s/backend-service.yaml
+                                
+                                # Wait for deployment to be ready
+                                kubectl rollout status deployment/backend-deployment --timeout=300s
+                                
+                                # Get service information
+                                echo "Backend service status:"
+                                kubectl get services backend-service
+                                
+                                # Get deployment status
+                                echo "Backend deployment status:"
+                                kubectl get deployments backend-deployment
+                                
+                                # Get pods status
+                                echo "Backend pods status:"
+                                kubectl get pods -l app=backend
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Cleanup') {
             steps {
                 script {

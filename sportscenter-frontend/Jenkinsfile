@@ -336,6 +336,46 @@ pipeline {
             }
         }
 
+        stage('Deploy to Kubernetes') {
+            steps {
+                dir('sportscenter-frontend') {
+                    script {
+                        withCredentials([file(credentialsId: 'k8s-config', variable: 'KUBECONFIG')]) {
+                            sh '''
+                                # Set KUBECONFIG environment variable
+                                export KUBECONFIG=$KUBECONFIG
+                                
+                                # Verify kubectl connection
+                                kubectl cluster-info
+                                
+                                # Apply frontend deployment
+                                echo "Deploying frontend to Kubernetes..."
+                                kubectl apply -f k8s/frontend-deployment.yaml
+                                
+                                # Apply frontend service
+                                kubectl apply -f k8s/frontend-service.yaml
+                                
+                                # Wait for deployment to be ready
+                                kubectl rollout status deployment/frontend-deployment --timeout=300s
+                                
+                                # Get service information
+                                echo "Frontend service status:"
+                                kubectl get services frontend-service
+                                
+                                # Get deployment status
+                                echo "Frontend deployment status:"
+                                kubectl get deployments frontend-deployment
+                                
+                                # Get pods status
+                                echo "Frontend pods status:"
+                                kubectl get pods -l app=frontend
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Cleanup') {
             steps {
                 script {
