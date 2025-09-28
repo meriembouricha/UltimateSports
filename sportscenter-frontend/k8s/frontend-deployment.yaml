@@ -17,6 +17,7 @@ spec:
       containers:
         - name: frontend
           image: meriembouricha/sportscenter-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           resources:
