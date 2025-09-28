@@ -229,13 +229,13 @@ pipeline {
                                 
                                 # Apply backend deployment
                                 echo "Deploying backend to Kubernetes..."
-                                kubectl apply -f k8s/backend-deployment.yaml
+                                kubectl apply -f ./k8s/backend-deployment.yaml
                                 
                                 # Update image with versioned tag to force new rollout
                                 kubectl set image deployment/backend-deployment backend=${DOCKER_IMAGE}:${IMAGE_TAG} --record
                                 
                                 # Apply backend service (idempotent)
-                                kubectl apply -f k8s/backend-service.yaml
+                                kubectl apply -f ./k8s/backend-service.yaml
                                 
                                 # Get service information
                                 echo "Backend service status:"
