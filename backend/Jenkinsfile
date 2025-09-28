@@ -32,6 +32,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Determine Version') {
+            steps {
+                script {
+                    dir('backend') {
+                        // Determine short git SHA and compose image tag
+                        def shortSha = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                        env.GIT_COMMIT_SHORT = shortSha
+                        env.IMAGE_TAG = "${shortSha}-${env.BUILD_NUMBER}"
+                        echo "Computed backend image tag: ${env.IMAGE_TAG}"
+                    }
+                }
+            }
+        }
         
         stage('Compile') {
             steps {
@@ -137,11 +151,12 @@ pipeline {
             steps {
                 dir('backend') {
                     script {
-                        // Build Docker image
-                        sh "docker build -t sportscenter-backend ."
-                        
-                        // Tag the image
-                        sh "docker tag sportscenter-backend ${DOCKER_IMAGE}"
+                        if (!env.IMAGE_TAG) {
+                            error 'IMAGE_TAG not set. Ensure Determine Version stage ran.'
+                        }
+                        // Build Docker image with version-specific tag
+                        sh "docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} -t ${DOCKER_IMAGE}:latest ."
+                        echo "Built backend image tags: ${DOCKER_IMAGE}:${IMAGE_TAG} and :latest"
                     }
                 }
             }
@@ -161,8 +176,9 @@ pipeline {
                         sh "echo $DOCKERHUB_PSW | docker login --username $DOCKERHUB_USR --password-stdin"
                     }
                     
-                    // Push the image
-                    sh "docker push ${DOCKER_IMAGE}"
+                    // Push both tags
+                    sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                    sh "docker push ${DOCKER_IMAGE}:latest"
                 }
             }
         }
@@ -183,11 +199,19 @@ pipeline {
                                 echo "Deploying backend to Kubernetes..."
                                 kubectl apply -f k8s/backend-deployment.yaml
                                 
-                                # Apply backend service
+                                # Update image with versioned tag to force new rollout
+                                kubectl set image deployment/backend-deployment backend=${DOCKER_IMAGE}:${IMAGE_TAG} --record
+                                
+                                # Apply backend service (idempotent)
                                 kubectl apply -f k8s/backend-service.yaml
                                 
                                 # Wait for deployment to be ready
-                                kubectl rollout status deployment/backend-deployment --timeout=300s || echo "⚠️ Rollout not ready yet, continuing..."
+                                kubectl rollout status deployment/backend-deployment --timeout=300s || {
+                                  echo "Backend deployment rollout failed" >&2
+                                  kubectl describe deployment backend-deployment
+                                  kubectl get pods -l app=backend -o wide
+                                  exit 1
+                                }
                                 
                                 # Get service information
                                 echo "Backend service status:"
@@ -212,8 +236,8 @@ pipeline {
                 script {
                     try {
                         // Clean up Docker images to save space
-                        sh 'docker rmi sportscenter-backend || true'
-                        sh "docker rmi ${DOCKER_IMAGE} || true"
+                        sh "docker rmi ${DOCKER_IMAGE}:${IMAGE_TAG} || true"
+                        sh "docker rmi ${DOCKER_IMAGE}:latest || true"
                         echo "Docker cleanup completed successfully"
                     } catch (Exception e) {
                         echo "Docker cleanup failed: ${e.getMessage()}"
