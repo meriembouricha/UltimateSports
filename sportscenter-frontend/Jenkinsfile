@@ -31,6 +31,20 @@ pipeline {
             }
         }
 
+        stage('Determine Version') {
+            steps {
+                script {
+                    dir('sportscenter-frontend') {
+                        // Determine short git SHA and compose image tag
+                        def shortSha = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                        env.GIT_COMMIT_SHORT = shortSha
+                        env.IMAGE_TAG = "${shortSha}-${env.BUILD_NUMBER}"
+                        echo "Computed image tag: ${env.IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 dir('sportscenter-frontend') {
@@ -226,6 +240,17 @@ pipeline {
                             
                             # Build with production configuration for deployment
                             npm run build -- --configuration=production
+
+                            echo "Verifying built bundle uses production API URL..."
+                            if grep -R "localhost:8080" dist/client/main*.js 2>/dev/null; then
+                              echo "ERROR: Build still references localhost:8080" >&2
+                              exit 1
+                            fi
+                            if ! grep -R "146.190.176.5:8080" dist/client/main*.js 2>/dev/null; then
+                              echo "ERROR: Production API URL not found in bundle" >&2
+                              exit 1
+                            fi
+                            echo "Bundle verification passed."
                         '''
                     }
                 }
@@ -306,11 +331,12 @@ pipeline {
             steps {
                 dir('sportscenter-frontend') {
                     script {
-                        // Build Docker image
-                        sh "docker build -t ${IMAGE_NAME} ."
-                        
-                        // Tag the image
-                        sh "docker tag ${IMAGE_NAME} ${DOCKER_IMAGE}"
+                        if (!env.IMAGE_TAG) {
+                            error 'IMAGE_TAG not set. Ensure Determine Version stage ran.'
+                        }
+                        // Build Docker image with version-specific tag
+                        sh "docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} -t ${DOCKER_IMAGE}:latest ."
+                        echo "Built image tags: ${DOCKER_IMAGE}:${IMAGE_TAG} and :latest"
                     }
                 }
             }
@@ -330,8 +356,9 @@ pipeline {
                         sh "echo $DOCKERHUB_PSW | docker login --username $DOCKERHUB_USR --password-stdin"
                     }
                     
-                    // Push the image
-                    sh "docker push ${DOCKER_IMAGE}"
+                    // Push both tags
+                    sh "docker push ${DOCKER_IMAGE}:${IMAGE_TAG}"
+                    sh "docker push ${DOCKER_IMAGE}:latest"
                 }
             }
         }
@@ -351,12 +378,19 @@ pipeline {
                                 # Apply frontend deployment
                                 echo "Deploying frontend to Kubernetes..."
                                 kubectl apply -f k8s/frontend-deployment.yaml
+                                # Update image with versioned tag to force new rollout
+                                kubectl set image deployment/frontend-deployment frontend=${DOCKER_IMAGE}:${IMAGE_TAG} --record
                                 
-                                # Apply frontend service
+                                # Apply frontend service (idempotent)
                                 kubectl apply -f k8s/frontend-service.yaml
                                 
                                 # Wait for deployment to be ready
-                                kubectl rollout status deployment/frontend-deployment --timeout=300s
+                                kubectl rollout status deployment/frontend-deployment --timeout=300s || {
+                                  echo "Deployment rollout failed" >&2
+                                  kubectl describe deployment frontend-deployment
+                                  kubectl get pods -l app=frontend -o wide
+                                  exit 1
+                                }
                                 
                                 # Get service information
                                 echo "Frontend service status:"
