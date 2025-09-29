@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  recommendation-service:
+    build: .
+    container_name: recommendation-microservice
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_URL=mysql+pymysql://sportscenteruser:YourStrongPassword123!@159.89.6.184:3306/sportscenter?charset=utf8mb4
+      - RETRAIN_INTERVAL_HOURS=24
+    volumes:
+      # Mount for model persistence (using named volume instead of bind mount)
+      - model_data:/app/model_data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/recommendations/1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - recommendation-network
+
+  # Optional: Scheduler service for model retraining
+  recommendation-scheduler:
+    build: .
+    container_name: recommendation-scheduler
+    environment:
+      - DB_URL=mysql+pymysql://sportscenteruser:YourStrongPassword123!@159.89.6.184:3306/sportscenter?charset=utf8mb4
+      - RETRAIN_INTERVAL_HOURS=24
+    volumes:
+      # Share model data with main service (using named volume)
+      - model_data:/app/model_data
+    command: ["python3", "setup.py", "retrain"]
+    restart: unless-stopped
+    depends_on:
+      - recommendation-service
+    networks:
+      - recommendation-network
+
+networks:
+  recommendation-network:
+    driver: bridge
+
+volumes:
+  model_data:
+    driver: local

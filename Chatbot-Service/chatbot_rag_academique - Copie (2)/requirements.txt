@@ -1,8 +1,21 @@
+# Web Framework
 fastapi
-uvicorn
+uvicorn[standard]
+
+# LangChain ecosystem - using latest compatible versions
 langchain
 langchain-community
 langchain-openai
+
+# AI/ML dependencies
 sentence-transformers
+openai
+
+# Data processing
+pypdf
+faiss-cpu
+
+# Configuration and utilities
 python-dotenv
 pydantic
+unidecode

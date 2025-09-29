@@ -28,7 +28,7 @@ JWT_SECRET=your_jwt_secret_here
 JWT_EXPIRATION=86400000
 
 # Stripe Configuration
-STRIPE_SECRET_KEY=your_stripe_secret_key_here
+STRIPE_SECRET_KEY=pk_test_51L9WOHDGmZ79p2nYZilrkl0oAe463ehlxg9z62IpcNxCR7HXOLtl801ff2cQwNv39tdlW3z7WUGj3K1BKy3Z8vYG00qx4F8V1A
 EOF
 
 echo "✅ .env file created successfully!"
