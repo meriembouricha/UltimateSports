@@ -16,7 +16,12 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*") // Allow any origin (any IP)
+                .allowedOrigins(
+                    "http://localhost:4200",
+                    "http://localhost:3000", 
+                    "http://167.71.45.125:4200",
+                    "http://138.68.114.34"
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
@@ -27,8 +32,13 @@ public class CorsConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Allow any origin (any IP)
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        // Allowed origins
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:4200",
+            "http://localhost:3000",
+            "http://167.71.45.125:4200",
+            "http://138.68.114.34"
+        ));
         
         // Allowed methods
         configuration.setAllowedMethods(Arrays.asList(
