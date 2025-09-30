@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class ComplaintController {
     private final IComplaint complaintService;
     private final IFeedback feedbackService ;

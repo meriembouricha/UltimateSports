@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/checkout")
-@CrossOrigin(origins = "*")
 public class CheckoutController {
 
     @Autowired

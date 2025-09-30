@@ -10,7 +10,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth/password")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class PasswordResetController {
 
     private final PasswordResetService passwordResetService;

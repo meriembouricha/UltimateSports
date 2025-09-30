@@ -11,7 +11,6 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 public class ClientRequestController {
     IClientRequestService clientRequestService;
 
