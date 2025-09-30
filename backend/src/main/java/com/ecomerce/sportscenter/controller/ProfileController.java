@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth/profile")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ProfileController {
 

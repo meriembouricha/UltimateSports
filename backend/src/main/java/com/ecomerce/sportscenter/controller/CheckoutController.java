@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/checkout")
-@CrossOrigin(origins = {"http://localhost:4200", "http://138.68.114.34"})
+@CrossOrigin(origins = "*")
 public class CheckoutController {
 
     @Autowired

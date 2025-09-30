@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/baskets")
+@CrossOrigin(origins = "*")
 public class BasketController {
     private final BasketService basketService;
     private final JwtHelper jwtHelper;

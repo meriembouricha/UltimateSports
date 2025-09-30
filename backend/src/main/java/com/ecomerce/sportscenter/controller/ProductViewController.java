@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product-views")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ProductViewController {
 

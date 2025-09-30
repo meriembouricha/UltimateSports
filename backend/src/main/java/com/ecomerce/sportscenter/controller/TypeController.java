@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/types")
+@CrossOrigin(origins = "*")
 public class TypeController {
 
     private final TypeService typeService;

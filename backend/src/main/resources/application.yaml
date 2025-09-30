@@ -50,6 +50,6 @@ stripe:
 
 recommendation:
   service:
-    url: http://127.0.0.1:8000/recommendations
+    url: http://167.71.45.125:8000/recommendations
 
 
