@@ -44,8 +44,8 @@ check_cluster() {
 
 # Function to deploy backend service
 deploy_backend() {
-    local deployment_file="k8s/backend-deployment.yaml"
-    local service_file="k8s/backend-service.yaml"
+    local deployment_file="./backend-deployment.yaml"
+    local service_file="./backend-service.yaml"
     
     if [ ! -f "$deployment_file" ] || [ ! -f "$service_file" ]; then
         print_error "Deployment files not found for backend"
